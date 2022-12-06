@@ -21,7 +21,9 @@ class App:
                 self.run = False
                 break
 
-    def draw(space, window)
+    def draw(self, space, window):
+        window.fill("white")
+        space.debug_draw(self.draw_options)
     
     def run(self):
         clock = pg.time.Clock()
@@ -29,6 +31,7 @@ class App:
         while self.run:
             self.eventHandler(pg.event.get())
 
+            
             clock.tick(self.fps)
 
         pg.quit()
