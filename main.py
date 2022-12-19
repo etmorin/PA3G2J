@@ -38,7 +38,7 @@ class App:
         if not self.shapeToFollow:
             self.shapeToFollow = self.env.space._shapes[2]
         mainBodyPos = self.shapeToFollow.body.position
-        self.cameraOffset = pm.Vec2d(-(mainBodyPos.x - self.cameraStart.x), -(mainBodyPos.y - self.cameraStart.y))
+        self.cameraOffset = - pm.Vec2d(mainBodyPos.x - self.cameraStart.x, mainBodyPos.y - self.cameraStart.y)
         print(self.cameraOffset)
         """
         pressed = pg.key.get_pressed()
