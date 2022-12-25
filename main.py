@@ -1,7 +1,7 @@
 import pymunk as pm
 import pymunk.pygame_util
 import pygame as pg
-import math
+import ui
 from env import *
 
 
@@ -19,8 +19,14 @@ class App:
         self.draw_options = pymunk.pygame_util.DrawOptions(self.physicsWindow)
         self.running = True
         self.env = Env(self.physicsWindow)
+        self.uiElements = []
+        self.setupUI()
 
-    
+
+    def setupUI(self):
+        startButton = ui.Button("Start", (20,20),(100,50), self.window, lambda:self.env.addObject())
+        self.uiElements.append(startButton)
+
 
     def eventHandler(self, events):
         for event in events:
@@ -33,6 +39,8 @@ class App:
                 if pressed[pg.K_RIGHT]: self.env.space._shapes[2].body.apply_force_at_local_point((10000,0), (0,0))
             
     def updateCamera(self):
+        if len(self.env.space._shapes) <= 1:
+            return
         if not self.cameraStart:
             self.cameraStart = self.env.space._shapes[2].body.position
         if not self.shapeToFollow:
@@ -57,12 +65,13 @@ class App:
         self.updateCamera()
         self.draw_options.transform = pm.Transform.translation(self.cameraOffset.x,self.cameraOffset.y)
         self.env.space.debug_draw(self.draw_options)
+        for elem in self.uiElements:
+            elem.draw()
         pg.display.update()
 
-  
+
     def run(self):
         clock = pg.time.Clock()
-        self.env.addObject()
         while self.running:
             self.eventHandler(pg.event.get())
 
