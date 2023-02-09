@@ -21,13 +21,16 @@ def create_boundaries(space, width, height):
     body = pymunk.Body(body_type=pymunk.Body.STATIC)
     body.position = pos
     shape = pymunk.Poly.create_box(body,size)
+    shape.elasticity = 0.4
+    shape.friction = 0.5
+
     space.add(body,shape)
   
 def add_muscle(space):
 
-    muscle=Muscle(300,300,100,10)
-    shape=muscle.get_shape()
-    body = muscle.get_body()
+    muscle = Muscle(300,300,100,10)
+    shape  = muscle.get_shape()
+    body   = muscle.get_body()
     space.add(body,shape)
     return shape
     
@@ -39,7 +42,24 @@ def add_bone(space):
     return shape
 
 def test_joint(space):
-    bone1=Bone()
+    bone1 = Bone(600, 600, 100, 10)
+    body1 = bone1.get_body()
+    shape1 = bone1.get_shape()
+    space.add(body1,shape1)
+    bone2 = Bone(700, 600, 100, 10)
+    body2 = bone2.get_body()
+    shape2= bone2.get_shape()
+    
+    space.add(body2,shape2)
+    articulation = Articulation(650,600,10,0)
+    body3= articulation.get_body()
+    shape3= articulation.get_shape()
+    space.add(body3,shape3)
+    joint1 = pymunk.PivotJoint(body1,body3,(650,600))
+    joint2 = pymunk.PivotJoint(body3,body2,(650,600))
+    space.add(joint1)
+    space.add(joint2)
+
 
 def run(window, width, height):
     run = True
@@ -50,8 +70,9 @@ def run(window, width, height):
     space = pymunk.Space()
     space.gravity = (0,981)
 
-    muscle = add_muscle(space)
-    bone = add_bone(space)
+    """    muscle = add_muscle(space)
+    bone = add_bone(space)"""
+    test_joint(space)
     create_boundaries(space, width, height)
     
 
