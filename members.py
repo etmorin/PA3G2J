@@ -1,5 +1,6 @@
 import pygame
 import pymunk
+import pymunk.pygame_util
 
 """
 Pour une créature, il faut trois éléments,
@@ -10,31 +11,40 @@ les articulations, la liaison entre deux os taille fixe.
 """
 
 class BodyPart:
-    def __init__(self, startPosX, startPosY,length, width):
+    def __init__(self, startPosX, startPosY, length, width):
         self.startPosX = startPosX
         self.startPosY = startPosY
         self.length = length
         self.width = width
+        self.body = pymunk.Body()
+        self.body.position = (startPosX, startPosY)
 
 class Bone(BodyPart):
-    def __init__(self, startPosX, startPosY,length, width):
-        super().__init__(self, startPosX, startPosY,length, width)
-        self.color = pygame.Color(255,255,255,0)
-        self.form = "rectangle"
+    def __init__(self, startPosX, startPosY, length, width):
+        super().__init__(self, startPosX, startPosY, length, width)
+
+        self.shape = pymunk.Poly.create_box(self.body,(length, width))
+        self.shape.mass = 10 #TODO:mettre une masse qui est un ratio de la taille
+        self.shape.color = (255,255,255,100) #NOIR
 
 class Articulation(BodyPart):
-    def __init__(self, startPosX, startPosY,length, width):
-        super().__init__(self, startPosX, startPosY,length, width)
-        self.color = pygame.Color(255,0,0,0)
-        self.form = "round"
+    def __init__(self, startPosX, startPosY, length, width):
+        super().__init__(self, startPosX, startPosY, length, width)
+
+        self.shape = pymunk.Circle(self.body, self.length) #ici length=radius
+        self.shape.mass = 10
+        self.shape.color = (255,0,0,100)#ROUGE
+        
 
 class Muscle(BodyPart):
     """
     TODO: Ajouter la fonction de changement de taille du muscle lors
     de la contraction
     """
-    def __init__(self, startPosX, startPosY,length, width):
-        super().__init__(self, startPosX, startPosY,length, width)
-        self.color = pygame.Color(240,0,0,100)
-        self.form= "oval"
+    def __init__(self, startPosX, startPosY, length, width):
+        super().__init__(self, startPosX, startPosY, length, width)
+        self.shape = pymunk.Segment(self.body, (-25,0), (25,0), radius = 5)
+        self.shape.mass = 10
+        self.shape.color = (255,105,180,100) #rose profond
+        
 
