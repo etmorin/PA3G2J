@@ -30,7 +30,7 @@ class App:
         self.camera.setObjectToFollow(x)
     
     def setupUI(self):
-        startButton = ui.Button("Start", (20,20),(100,50), self.window, lambda:self.test())
+        startButton = ui.Button("Start", (860,650),(100,50), self.window, lambda:self.test())
         self.uiElements.append(startButton)
 
 
