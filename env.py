@@ -21,6 +21,7 @@ class Env:
         shape = pm.Circle(body, 20)
         shape.mass = 10
         self.space.add(body,shape)
+        return shape
         
     def step(self,dt):
         self.space.step(dt)
