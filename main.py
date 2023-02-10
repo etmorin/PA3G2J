@@ -25,8 +25,12 @@ class App:
         self.setupUI()
 
 
+    def test(self):
+        x = self.env.addObject()
+        self.camera.setObjectToFollow(x)
+    
     def setupUI(self):
-        startButton = ui.Button("Start", (20,20),(100,50), self.window, lambda:self.env.addObject())
+        startButton = ui.Button("Start", (20,20),(100,50), self.window, lambda:self.test())
         self.uiElements.append(startButton)
 
 

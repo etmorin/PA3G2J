@@ -13,6 +13,7 @@ class Camera:
         
     def setObjectToFollow(self, newObject):
         self.objectToFollow = newObject
+        self.startPosition = self.objectToFollow.body.position
         
     def setDrawOptions(self, drawOptions):
         self.drawOptions = drawOptions
