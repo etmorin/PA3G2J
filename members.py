@@ -32,6 +32,9 @@ class BodyPart:
     def get_posY(self):
         return self.posY
     
+    def set_length(self, newLength):
+        self.length = newLength
+    
 
 class Bone(BodyPart):
     def __init__(self, posX, posY, length, width):
@@ -57,9 +60,9 @@ class Muscle(BodyPart):
     TODO: Ajouter la méthode de changement de taille du muscle lors
     de la contraction
     """
-    def __init__(self, posX, posY, length, width):
+    def __init__(self, posX, posY,otherPosX, otherPosY, length, width):
         super().__init__( posX, posY, length, width)
-        self.shape = pymunk.Segment(self.body, (-25,0), (25,0), radius = 5)
+        self.shape = pymunk.Segment(self.body, (posX, posY),(otherPosX,otherPosY), radius = width)
         self.shape.mass = 10
         self.shape.color = (255,105,180,100) #rose profond
 

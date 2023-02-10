@@ -46,19 +46,33 @@ def test_joint(space):
     body1 = bone1.get_body()
     shape1 = bone1.get_shape()
     space.add(body1,shape1)
-    bone2 = Bone(700, 600, 100, 10)
+    bone2 = Bone(710, 600, 100, 10)
     body2 = bone2.get_body()
     shape2= bone2.get_shape()
     
     space.add(body2,shape2)
-    articulation = Articulation(650,600,10,0)
+    articulation = Articulation(655,600,5,0)
     body3= articulation.get_body()
     shape3= articulation.get_shape()
     space.add(body3,shape3)
     joint1 = pymunk.PivotJoint(body1,body3,(650,600))
-    joint2 = pymunk.PivotJoint(body3,body2,(650,600))
+    joint2 = pymunk.PivotJoint(body2,body3,(660,600))
     space.add(joint1)
     space.add(joint2)
+    spring = pymunk.DampedSpring(body1, body2, (0,0), (0,0), 0, 1000, 100)
+    space.add(spring)
+
+
+
+"""    muscle1= Muscle(650,610,100,5)
+    body4=muscle1.get_body()
+    shape4 = muscle1.get_shape()
+    space.add(body4,shape4)
+    joint3 = pymunk.PivotJoint(body1,body4,(600,600))
+    joint4 = pymunk.PivotJoint(body2,body4, (660,650))
+    space.add(joint3)
+    space.add(joint4)
+   """
 
 
 def run(window, width, height):
@@ -73,6 +87,7 @@ def run(window, width, height):
     """    muscle = add_muscle(space)
     bone = add_bone(space)"""
     test_joint(space)
+
     create_boundaries(space, width, height)
     
 
