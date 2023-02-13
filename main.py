@@ -26,11 +26,14 @@ class App:
 
 
     def start(self):
-        x = self.env.addObject()
-        self.camera.setObjectToFollow(x)
+        self.x = self.env.addObject()
+        self.camera.setObjectToFollow(self.x)
+        
+    def reset(self):
+        self.env.space.remove(self.x)
     
     def setupUI(self):
-        startButton = ui.Button("Start", (860,650),(100,50), self.window, lambda:self.start())
+        startButton = ui.ToggleButton("Start", "Reset", (860,650),(100,50), self.window, lambda:self.start(), lambda:self.reset())
         self.uiElements.append(startButton)
 
 
@@ -43,7 +46,11 @@ class App:
                 pressed = pg.key.get_pressed()
                 if pressed[pg.K_LEFT]: self.env.space._shapes[2].body.apply_force_at_local_point((-10000,0), (0,0))
                 if pressed[pg.K_RIGHT]: self.env.space._shapes[2].body.apply_force_at_local_point((10000,0), (0,0))
-            
+            if event.type == pg.MOUSEBUTTONDOWN:
+                for elem in self.uiElements:
+                    elem.checkClick()
+                
+           
     def updateCamera(self):
         if len(self.env.space._shapes) <= 1:
             return
