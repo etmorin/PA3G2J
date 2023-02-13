@@ -4,6 +4,7 @@ import pygame as pg
 import ui
 from env import Env
 from camera import Camera
+from walker import Walker
 
 
 class App:
@@ -26,11 +27,11 @@ class App:
 
 
     def start(self):
-        self.x = self.env.addObject()
-        self.camera.setObjectToFollow(self.x)
+        self.walker = Walker(self.env.space).create(self.env.space)
+        self.camera.setObjectToFollow(self.walker)
         
     def reset(self):
-        self.env.space.remove(self.x)
+        self.env.space.remove(self.walker)
     
     def setupUI(self):
         startButton = ui.ToggleButton("Start", "Reset", (860,650),(100,50), self.window, lambda:self.start(), lambda:self.reset())
@@ -42,10 +43,13 @@ class App:
             if event.type == pg.QUIT:
                 self.running = False
                 break
+            
             if event.type == pg.KEYDOWN:
                 pressed = pg.key.get_pressed()
+                # temporaire
                 if pressed[pg.K_LEFT]: self.env.space._shapes[2].body.apply_force_at_local_point((-10000,0), (0,0))
                 if pressed[pg.K_RIGHT]: self.env.space._shapes[2].body.apply_force_at_local_point((10000,0), (0,0))
+                
             if event.type == pg.MOUSEBUTTONDOWN:
                 for elem in self.uiElements:
                     elem.checkClick()

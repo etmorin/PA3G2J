@@ -26,7 +26,8 @@ class Camera:
             return
         
         mainBodyPos = self.objectToFollow.body.position
-        self.cameraOffset = -pm.Vec2d(mainBodyPos.x - self.startPosition.x, mainBodyPos.y - self.startPosition.y)
         
+        self.cameraOffset = -pm.Vec2d(self.startPosition.x - mainBodyPos.x, mainBodyPos.y - self.startPosition.y)
+        print(self.cameraOffset)
         self.drawOptions.transform = pm.Transform.translation(self.cameraOffset.x,self.cameraOffset.y)
         self.env.space.debug_draw(self.drawOptions)
