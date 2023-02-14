@@ -9,11 +9,11 @@ class Camera:
         self.objectToFollow = None
         self.drawOptions = None
         self.startPosition = pg.Vector2(0,0)
-        self.relativePosition = pg.Vector2(0,0)
+        self.objectPosition = None
         
     def setObjectToFollow(self, newObject):
         self.objectToFollow = newObject
-        self.startPosition = self.objectToFollow.body.position
+        
         
     def setDrawOptions(self, drawOptions):
         self.drawOptions = drawOptions
@@ -23,11 +23,10 @@ class Camera:
         
     def update(self):
         if not self.objectToFollow:
+            self.env.space.debug_draw(self.drawOptions)
             return
-        
-        mainBodyPos = self.objectToFollow.body.position
-        
-        self.cameraOffset = -pm.Vec2d(self.startPosition.x - mainBodyPos.x, mainBodyPos.y - self.startPosition.y)
-        print(self.cameraOffset)
-        self.drawOptions.transform = pm.Transform.translation(self.cameraOffset.x,self.cameraOffset.y)
+        self.objectPosition = self.objectToFollow.body.position 
+        windowRect = self.drawOptions.surface.get_rect()
+        cameraOffset = pm.Vec2d(-self.objectPosition.x + windowRect.width/2, -self.objectPosition.y + windowRect.height/2)
+        self.drawOptions.transform = pm.Transform.translation(cameraOffset.x, cameraOffset.y)
         self.env.space.debug_draw(self.drawOptions)

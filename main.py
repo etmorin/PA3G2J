@@ -16,9 +16,9 @@ class App:
         self.window = pg.display.set_mode((self.WIDTH, self.HEIGHT))
         self.physicsWindow = self.window.subsurface(pg.Rect(self.WIDTH/4,self.HEIGHT/20,self.WIDTH/2,self.HEIGHT/2))
         self.env = Env(self.physicsWindow)
-        self.draw_options = pymunk.pygame_util.DrawOptions(self.physicsWindow)
+        self.drawOptions = pymunk.pygame_util.DrawOptions(self.physicsWindow)
         self.camera = Camera()
-        self.camera.setDrawOptions(self.draw_options)
+        self.camera.setDrawOptions(self.drawOptions)
         self.camera.setEnv(self.env)
         self.running = True
         
@@ -56,8 +56,6 @@ class App:
                 
            
     def updateCamera(self):
-        if len(self.env.space._shapes) <= 1:
-            return
         self.camera.update()
  
 
