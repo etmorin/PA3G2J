@@ -37,7 +37,7 @@ class App:
         startButton = ui.ToggleButton("Start", "Reset", (860,650),(100,50), self.window, lambda:self.start(), lambda:self.reset())
         self.uiElements.append(startButton)
 
-
+    
     def eventHandler(self, events):
         for event in events:
             if event.type == pg.QUIT:
@@ -47,8 +47,8 @@ class App:
             if event.type == pg.KEYDOWN:
                 pressed = pg.key.get_pressed()
                 # temporaire
-                if pressed[pg.K_LEFT]: self.env.space._shapes[2].body.apply_force_at_local_point((-10000,0), (0,0))
-                if pressed[pg.K_RIGHT]: self.env.space._shapes[2].body.apply_force_at_local_point((10000,0), (0,0))
+                if pressed[pg.K_LEFT]: self.walker.body.apply_force_at_local_point((-1000000,0), (0,0))
+                if pressed[pg.K_RIGHT]: self.walker.body.apply_force_at_local_point((1000000,0), (0,0))
                 
             if event.type == pg.MOUSEBUTTONDOWN:
                 for elem in self.uiElements:

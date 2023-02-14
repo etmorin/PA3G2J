@@ -1,6 +1,7 @@
 import pymunk as pm
 import pymunk.pygame_util
 import pygame as pg
+import string
 
 
 class Camera:
@@ -20,6 +21,13 @@ class Camera:
         
     def setEnv(self, env):
         self.env = env
+    
+    def drawGraduations(self):
+        for value, graduation in self.env.graduation.items():
+            text = pg.font.SysFont("Arial", 30).render(str(value),1,pg.Color(0,0,0))
+            posx, posy = graduation.body.position
+            textRect = text.get_rect(center=(posx + self.offset.x, posy + 375 - self.offset.y))
+            self.drawOptions.surface.blit(text, textRect)
         
     def update(self):
         if not self.objectToFollow:
@@ -27,6 +35,7 @@ class Camera:
             return
         self.objectPosition = self.objectToFollow.body.position 
         windowRect = self.drawOptions.surface.get_rect()
-        cameraOffset = pm.Vec2d(-self.objectPosition.x + windowRect.width/2, -self.objectPosition.y + windowRect.height/2)
-        self.drawOptions.transform = pm.Transform.translation(cameraOffset.x, cameraOffset.y)
+        self.offset = -pm.Vec2d(self.objectPosition.x - windowRect.width/2, self.objectPosition.y - windowRect.height/2)
+        self.drawOptions.transform = pm.Transform.translation(self.offset.x, self.offset.y)
         self.env.space.debug_draw(self.drawOptions)
+        self.drawGraduations()
