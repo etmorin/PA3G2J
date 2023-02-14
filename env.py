@@ -1,3 +1,4 @@
+import pygame as pg
 import pymunk as pm
 import pymunk.pygame_util
 
@@ -12,8 +13,14 @@ class Env:
     def createFloor(self):
         body = pm.Body(body_type=pm.Body.STATIC)
         body.position = (self.window.get_width()/2, 20)
-        shape = pm.Poly.create_box(body, (1000, 20))
+        shape = pm.Poly.create_box(body, (22000, 20))
+        shape.friction = 1.0
         self.space.add(body, shape)
+        for i in range(-110,110,1):
+            body = pm.Body(body_type=pm.Body.STATIC)
+            body.position = (100*i, 5)
+            shape = pm.Poly.create_box(body, (5, 10))
+            self.space.add(body, shape)
         return shape
         
     def addObject(self):
