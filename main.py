@@ -4,6 +4,7 @@ import pygame as pg
 import ui
 from env import Env
 from camera import Camera
+from walker import Walker
 
 
 class App:
@@ -15,9 +16,9 @@ class App:
         self.window = pg.display.set_mode((self.WIDTH, self.HEIGHT))
         self.physicsWindow = self.window.subsurface(pg.Rect(self.WIDTH/4,self.HEIGHT/20,self.WIDTH/2,self.HEIGHT/2))
         self.env = Env(self.physicsWindow)
-        self.draw_options = pymunk.pygame_util.DrawOptions(self.physicsWindow)
+        self.drawOptions = pymunk.pygame_util.DrawOptions(self.physicsWindow)
         self.camera = Camera()
-        self.camera.setDrawOptions(self.draw_options)
+        self.camera.setDrawOptions(self.drawOptions)
         self.camera.setEnv(self.env)
         self.running = True
         
@@ -26,27 +27,35 @@ class App:
 
 
     def start(self):
-        x = self.env.addObject()
-        self.camera.setObjectToFollow(x)
+        self.walker = Walker(self.env.space).create(self.env.space)
+        self.camera.setObjectToFollow(self.walker)
+        
+    def reset(self):
+        self.env.space.remove(self.walker)
     
     def setupUI(self):
-        startButton = ui.Button("Start", (860,650),(100,50), self.window, lambda:self.start())
+        startButton = ui.ToggleButton("Start", "Reset", (860,650),(100,50), self.window, lambda:self.start(), lambda:self.reset())
         self.uiElements.append(startButton)
 
-
+    
     def eventHandler(self, events):
         for event in events:
             if event.type == pg.QUIT:
                 self.running = False
                 break
+            
             if event.type == pg.KEYDOWN:
                 pressed = pg.key.get_pressed()
-                if pressed[pg.K_LEFT]: self.env.space._shapes[2].body.apply_force_at_local_point((-10000,0), (0,0))
-                if pressed[pg.K_RIGHT]: self.env.space._shapes[2].body.apply_force_at_local_point((10000,0), (0,0))
-            
+                # temporaire
+                if pressed[pg.K_LEFT]: self.walker.body.apply_force_at_local_point((-1000000,0), (0,0))
+                if pressed[pg.K_RIGHT]: self.walker.body.apply_force_at_local_point((1000000,0), (0,0))
+                
+            if event.type == pg.MOUSEBUTTONDOWN:
+                for elem in self.uiElements:
+                    elem.checkClick()
+                
+           
     def updateCamera(self):
-        if len(self.env.space._shapes) <= 1:
-            return
         self.camera.update()
  
 
