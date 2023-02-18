@@ -23,19 +23,24 @@ class App:
         self.running = True
         
         self.uiElements = []
+        self.interactables = []
         self.setupUI()
 
 
     def start(self):
         self.walker = Walker(self.env.space).create(self.env.space)
         self.camera.setObjectToFollow(self.walker)
+        self.uiElements[1].setObjectToFollow(self.walker)
         
     def reset(self):
         self.env.space.remove(self.walker)
     
     def setupUI(self):
         startButton = ui.ToggleButton("Start", "Reset", (860,650),(100,50), self.window, lambda:self.start(), lambda:self.reset())
+        self.interactables.append(startButton)
         self.uiElements.append(startButton)
+        distanceCounter = ui.DistanceCounter(self.window)
+        self.uiElements.append(distanceCounter)
 
     
     def eventHandler(self, events):
@@ -51,7 +56,7 @@ class App:
                 if pressed[pg.K_RIGHT]: self.walker.body.apply_force_at_local_point((1000000,0), (0,0))
                 
             if event.type == pg.MOUSEBUTTONDOWN:
-                for elem in self.uiElements:
+                for elem in self.interactables:
                     elem.checkClick()
                 
            
