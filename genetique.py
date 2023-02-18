@@ -26,6 +26,7 @@ import random
 
 
 class Individual():
+
     def __init__(self, dna, father, mother) :
         self.father = father
         self.mother = mother
@@ -61,13 +62,16 @@ class Individual():
         dna1 = mydna.get_geneString()
         dna2 = matedna.get_geneString()
         newDnaString =""
+
         for i in range(len(dna1)):
             if dna1[i] != dna2[i]:
                 chance = random.randint(0,1)
+
                 if chance == 0:
                     newDnaString += dna2[i]
                 else:
                     newDnaString += dna1[i]
+                    
             else:
                 newDnaString += dna1[i]
         return newDnaString
@@ -77,22 +81,21 @@ class Individual():
 
         for letter in dnaString:
             chance = random.randint(0,999)
+
             if (chance <= self.mutationRiskPerThousand):
                 choice = random.randint(0,len(dnaString)-1)
                 listedString = list(dnaString)
+
                 if listedString[choice] == "1":
                     listedString[choice] = "0"
+
                 else:
                     listedString[choice] = "1"
-
                 dnaString = "".join(listedString)
+
         return dnaString
             
 
-
-
-
-        
 
 class Dna():
 
@@ -102,11 +105,13 @@ class Dna():
 
 
     def gene_separation(self):
+
         i = 0
         temp=""
         for element in self.string:
             i+=1
             temp += element
+
             if i==4:
                 self.geneList.append(temp)
                 temp =""
