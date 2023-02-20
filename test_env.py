@@ -28,6 +28,7 @@ def create_boundaries(space, width, height):
   
 
 def run(window, width, height):
+
     run = True
     clock = pygame.time.Clock()
     fps = 60
@@ -36,8 +37,7 @@ def run(window, width, height):
     space = pymunk.Space()
     space.gravity = (0,981)
 
-    frankenstein = Creature(space,500,600,50,1,100,10,7,7,2500)
-    
+    frankenstein = Creature(space,500,600,30,1,50,10,5,2,1500)
     create_boundaries(space, width, height)
     
 

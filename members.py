@@ -2,6 +2,7 @@ import pygame
 import pymunk
 import pymunk.pygame_util
 import math
+from genetique import *
 
 """
 Pour une créature, il faut trois éléments,
@@ -95,38 +96,15 @@ class Arm(BodyPart):
         spring = pymunk.DampedSpring(bone.get_body(), self.previousbone, (0,0), (0,0), 0, self.muscleStrength, 100)
         self.space.add(joint1,joint2,spring)
         self.previousbone = bone.get_body()
-
-#Cette classe fait un membre articulé     
-class ArmRight():
-
-    def __init__(self, space, posX, posY, length, width, articulationsize):
-        self.bone1 = Bone(posX, posY, length, width)
-        self.bone2 = Bone((posX+length+(articulationsize*2)),posY,length,width)
-        self.articulation = Articulation(posX+length/2+articulationsize, posY, articulationsize, 0)
-        body1 = self.bone1.get_body()
-        shape1 = self.bone1.get_shape()
-        space.add(body1,shape1)
-
-        body2 = self.bone2.get_body()
-        shape2= self.bone2.get_shape()
-        space.add(body2,shape2)
-
-        body3= self.articulation.get_body()
-        shape3= self.articulation.get_shape()
-        space.add(body3,shape3)
-
-        joint1 = pymunk.PivotJoint(body1,body3,(posX+length/2,posY))
-        joint2 = pymunk.PivotJoint(body2,body3,(posX+length/2+articulationsize*2,posY))
-        space.add(joint1)
-        space.add(joint2)
-        spring = pymunk.DampedSpring(body1, body2, (0,0), (0,0), 0, 500, 100)
-        space.add(spring)
+ 
 
 
 class Creature():
 
     def __init__(self, space, posX, posY, bodySize, nbrOfArms, lengthBones, widthBones, radiusArticulations,numberOfArticulations, muscleStrength):
-            
+        
+
+        self.parameters = [bodySize,nbrOfArms,lengthBones,widthBones,radiusArticulations,numberOfArticulations,muscleStrength]
         torso = Torso(posX,posY,bodySize,width=0)
         torso.round()
         body  = torso.get_body()
@@ -152,4 +130,9 @@ class Creature():
         space.add(body,shape)
 
         #TODO: ajouter nom creature, ajouter la puissance des muscles (varier via armright)
+
+
+
+
+
 
