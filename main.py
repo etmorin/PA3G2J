@@ -22,6 +22,9 @@ class App:
         self.camera.setDrawOptions(self.drawOptions)
         self.camera.setEnv(self.env)
         self.running = True
+        self.genSize = 10
+        self.genTime = 10
+        self.population = []
         
         self.uiElements = []
         self.interactables = []
@@ -29,9 +32,12 @@ class App:
 
 
     def start(self):
-        creature = Creature(self.env.space, 0, 50, 20, 2, 40, 5, 5, 1, 2000)
-        self.camera.setObjectToFollow(creature.getCenterShape())
-        self.uiElements[1].setObjectToFollow(creature.getCenterShape())
+        for i in range(1, self.genSize+1,1):
+            creature = Creature(self.env.space, 0, 50, 20, 2, 40, 5, 5, 1, 2000)
+            self.population.append(creature)
+        self.camera.setObjectToFollow(self.population[0].getCenterShape())
+        distanceTracker = self.uiElements[1]
+        distanceTracker.setObjectToFollow(self.population[0].getCenterShape())
         
     def reset(self):
         self.env.space.remove(self.walker)
@@ -52,9 +58,6 @@ class App:
             
             if event.type == pg.KEYDOWN:
                 pressed = pg.key.get_pressed()
-                # temporaire
-                if pressed[pg.K_LEFT]: self.walker.body.apply_force_at_local_point((-1000000,0), (0,0))
-                if pressed[pg.K_RIGHT]: self.walker.body.apply_force_at_local_point((1000000,0), (0,0))
                 
             if event.type == pg.MOUSEBUTTONDOWN:
                 for elem in self.interactables:
