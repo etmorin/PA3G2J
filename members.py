@@ -105,10 +105,10 @@ class Creature():
         
 
         self.parameters = [bodySize,nbrOfArms,lengthBones,widthBones,radiusArticulations,numberOfArticulations,muscleStrength]
-        torso = Torso(posX,posY,bodySize,width=0)
-        torso.round()
-        body  = torso.get_body()
-        shape = torso.get_shape()
+        self.torso = Torso(posX,posY,bodySize,width=0)
+        self.torso.round()
+        body  = self.torso.get_body()
+        shape = self.torso.get_shape()
 
         for i in range(nbrOfArms):
 
@@ -129,6 +129,8 @@ class Creature():
             space.add(joint,spring)
         space.add(body,shape)
 
+    def getCenterShape(self):
+        return self.torso.get_shape()
         #TODO: ajouter nom creature, ajouter la puissance des muscles (varier via armright)
 
 

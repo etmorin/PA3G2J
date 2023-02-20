@@ -71,8 +71,8 @@ class DistanceCounter():
         self.positionTracker.setObjectToFollow(objectToFollow)
 
     def update(self):
-        #self.distance = float(self.positionTracker.getRanDistance()/100) if self.positionTracker.getRanDistance() else self.distance
-        self.text = self.style.render("Distance parcourue: {}m".format(self.distance),1,pg.Color(0,0,0))
+        self.distance = float(self.positionTracker.getRanDistance()/100) if self.positionTracker.getRanDistance() else self.distance
+        self.text = self.style.render("Distance parcourue: {:.2f}m".format(self.distance),1,pg.Color(0,0,0))
 
     def draw(self):
         self.update()

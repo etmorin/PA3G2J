@@ -30,7 +30,7 @@ PARAMETERS = ["bodySize", "nbrOfArms", "lengthBones",
 
 class Individual():
 
-    def __init__(self, dna, father, mother) :
+    def __init__(self, dna, father=None, mother=None) :
         self.father = father
         self.mother = mother
         self.dna = dna

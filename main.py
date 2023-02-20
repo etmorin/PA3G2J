@@ -4,7 +4,8 @@ import pygame as pg
 import ui
 from env import Env
 from camera import Camera
-from walker import Walker
+from members import *
+from genetique import *
 
 
 class App:
@@ -28,9 +29,9 @@ class App:
 
 
     def start(self):
-        self.walker = Walker(self.env.space).create(self.env.space)
-        self.camera.setObjectToFollow(self.walker)
-        self.uiElements[1].setObjectToFollow(self.walker)
+        creature = Creature(self.env.space, 0, 50, 20, 2, 40, 5, 5, 1, 2000)
+        self.camera.setObjectToFollow(creature.getCenterShape())
+        self.uiElements[1].setObjectToFollow(creature.getCenterShape())
         
     def reset(self):
         self.env.space.remove(self.walker)
