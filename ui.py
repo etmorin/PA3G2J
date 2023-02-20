@@ -1,5 +1,6 @@
 import pygame as pg
 import sys
+from positionTracker import PositionTracker
 
 class Button:
     def __init__(self, text, pos, size, surface, func=lambda:print("no Action")) -> None:
@@ -55,4 +56,25 @@ class ToggleButton(Button):
         else:
             self.toggled = False
             self.func2()
-    
+
+
+class DistanceCounter():
+    def __init__(self, surface, objectToFollow = None):
+        self.surface = surface
+        self.distance = 0.00
+        self.style = pg.font.SysFont("Arial", 28)
+        self.positionTracker = PositionTracker()
+        if objectToFollow:
+            self.positionTracker.setObjectToFollow(objectToFollow)
+
+    def setObjectToFollow(self, objectToFollow):
+        self.positionTracker.setObjectToFollow(objectToFollow)
+
+    def update(self):
+        #self.distance = float(self.positionTracker.getRanDistance()/100) if self.positionTracker.getRanDistance() else self.distance
+        self.text = self.style.render("Distance parcourue: {}m".format(self.distance),1,pg.Color(0,0,0))
+
+    def draw(self):
+        self.update()
+        textRect = self.text.get_rect(center=pg.Vector2(self.surface.get_rect().centerx,21))
+        self.surface.blit(self.text, textRect)
