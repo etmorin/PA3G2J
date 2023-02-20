@@ -160,18 +160,20 @@ class Dna():
     
     def dnaToParam(self,parameters):
 
+        multiplicationFactor= [ 15,  1,  50, 4 ,  2, 0.5, 200, 1]
+
         self.geneList = self.gene_separation()
+        print(self.geneList)
         tempList = []
         for i in range (len(self.geneList)):
             temp = int(self.geneList[i],2)
-            tempList.append(temp)
+
+            tempList.append(temp*multiplicationFactor[i])
 
         dictionnary = dict(zip(parameters,tempList))
         return dictionnary
 
 
-        
-        
 
     def control(self,temp):
 
@@ -186,6 +188,7 @@ class Dna():
 """                                                                             
     
 stringMale   = "00000000000000000000000000000000"
+
 stringFemale = "11111111111111111111111111111111"
 
 
@@ -203,8 +206,7 @@ creatureParameters = {"bodySize" : 30 , "nbrOfArms": 1, "lengthBones": 100,
                        "widthBones" : 10, "radiusArticulations":5,
                        "numberOfArticulations": 2, "muscleStrength": 1500}
 
-
-
-
-
-
+colinadn= male.reproduce(female)
+colin = colinadn.get_dna()
+dico = colin.dnaToParam(PARAMETERS)
+print(dico)
