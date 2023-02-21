@@ -1,9 +1,12 @@
 import pymunk as pm
 import pymunk.pygame_util
 import pygame as pg
+import random
+import time
 import ui
 from env import Env
 from camera import Camera
+from positionTracker import *
 from members import *
 from genetique import *
 
@@ -24,7 +27,9 @@ class App:
         self.running = True
         self.genSize = 10
         self.genTime = 10
+        self.currentGen = 1
         self.population = []
+        self.trackers = []
         
         self.uiElements = []
         self.interactables = []
@@ -32,15 +37,41 @@ class App:
 
 
     def start(self):
-        for i in range(1, self.genSize+1,1):
+        for i in range(self.genSize):
             creature = Creature(self.env.space, 0, 50, 20, 2, 40, 5, 5, 1, 2000)
-            self.population.append(creature)
-        self.camera.setObjectToFollow(self.population[0].getCenterShape())
+            positionTracker = PositionTracker()
+            positionTracker.setObjectToFollow(creature.getCenterShape())
+            dna = Dna(None).paramToDna(dict(zip(PARAMETERS,creature.parameters)))
+            indinvidual = Individual(dna,creature)
+            self.population.append(indinvidual)
+            self.trackers.append(positionTracker)
+        startTime = time.time()
+        currentTime = startTime
+        while currentTime <= startTime + self.genTime:
+            currentTime = time.time()
+        weights = [tracker.getMaxRanDistance() for tracker in self.trackers]
+        newGeneration = []
+        for i in range(self.genSize):
+            parent1, parent2 = random.choice(self.population,p=weights,size=2,replace=False)
+            child = parent1.reproduce(parent2)
+            newGeneration.append(child)
+        self.env.reset()
+        self.currentGen += 1
+        self.population = newGeneration
+        for individual in self.population:
+            parameters = Dna.dnaToParam(indinvidual.get_dna())
+            parameters["space"] = self.env.space
+            parameters["posX"] = 0
+            parameters["posY"] = 50
+            individual.set_bodyInSpace(Creature(**parameters))
+            
+            
+        self.camera.setObjectToFollow(self.population[0].get_bodyInSpace().getCenterShape())
         distanceTracker = self.uiElements[1]
-        distanceTracker.setObjectToFollow(self.population[0].getCenterShape())
+        distanceTracker.setObjectToFollow(self.population[0].get_bodyInSpace().getCenterShape())
         
     def reset(self):
-        self.env.space.remove(self.walker)
+        pass
     
     def setupUI(self):
         startButton = ui.ToggleButton("Start", "Reset", (860,650),(100,50), self.window, lambda:self.start(), lambda:self.reset())

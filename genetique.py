@@ -30,10 +30,11 @@ PARAMETERS = ["bodySize", "nbrOfArms", "lengthBones",
 
 class Individual():
 
-    def __init__(self, dna, father=None, mother=None) :
+    def __init__(self, dna, bodyInSpace=None, father=None, mother=None) :
         self.father = father
         self.mother = mother
         self.dna = dna
+        self.bodyInSpace = bodyInSpace
         self.mutationRiskPerThousand = 10
 
     def __str__(self) :
@@ -48,6 +49,12 @@ class Individual():
     def get_dna(self):
         return self.dna
     
+    def get_bodyInSpace(self):
+        return self.bodyInSpace
+    
+    def set_bodyInSpace(self, bodyInSpace):
+        self.bodyInSpace = bodyInSpace
+    
     def set_mutationRisk(self, newMutationRisk):
         self.mutationRiskPerThousand = newMutationRisk
 
@@ -57,7 +64,7 @@ class Individual():
         newDnaString = self.mixing_dna(self.dna,otherDna) 
         newDnaString = self.mutation_center(newDnaString)
         newDna = Dna(newDnaString)
-        child = Individual(newDna,self,mate)
+        child = Individual(newDna,father = self,mother = mate)
         return child
     
     def mixing_dna(self, mydna, matedna):
