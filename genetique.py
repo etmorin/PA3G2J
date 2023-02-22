@@ -1,4 +1,5 @@
 import random
+from members import *
 
 PARAMETERS = ["bodySize", "nbrOfArms", "lengthBones",
                        "widthBones", "radiusArticulations",
@@ -37,6 +38,9 @@ class Individual():
         self.bodyInSpace = bodyInSpace
         self.mutationRiskPerThousand = 10
 
+        if type(dna) == str :
+            self.dna = Dna(dna)
+
     def __str__(self) :
         return(self.dna.get_geneString())
 
@@ -59,15 +63,34 @@ class Individual():
         self.mutationRiskPerThousand = newMutationRisk
 
     def reproduce(self,mate):
+        """
+        methode de reproduction de l'individu, appelle également la fonction de mutation
+
+        args: 
+            mate: un objet de type individu avec lequel notre objet va se reproduire
+        
+        returns:
+            child: un objet de type individu qui est l'enfant des deux autres individus.
+    
+        """
 
         otherDna = mate.get_dna()
-        newDnaString = self.mixing_dna(self.dna,otherDna) 
-        newDnaString = self.mutation_center(newDnaString)
+        newDnaString = self.mixingDna(self.dna,otherDna) 
+        newDnaString = self.mutationCenter(newDnaString)
         newDna = Dna(newDnaString)
         child = Individual(newDna,father = self,mother = mate)
         return child
     
-    def mixing_dna(self, mydna, matedna):
+    def mixingDna(self, mydna, matedna):
+        """
+        Mélange deux objets de type ADN
+        Args:
+            mydna, matedna: objets de type ADN
+        
+        returns:
+            string utilisable par objet adn
+        
+        """
 
         dna1 = mydna.get_geneString()
         dna2 = matedna.get_geneString()
@@ -87,7 +110,7 @@ class Individual():
         return newDnaString
     
     
-    def mutation_center(self,dnaString):
+    def mutationCenter(self,dnaString):
 
         for letter in dnaString:
             chance = random.randint(0,999)
@@ -104,7 +127,27 @@ class Individual():
                 dnaString = "".join(listedString)
 
         return dnaString
-            
+    
+    def draw(self, space, posX, posY):
+        """
+        dessine une créature dans l'espace.
+        Args:
+            space: l'espace pymunk
+            posX,posY : deux int pour la position
+        Returns:
+            un objet de type créature
+        """
+
+        dictionnary = self.dna.dnaToParam(PARAMETERS)
+        paramValues = list(dictionnary.values())
+        paramValues = map(int,paramValues)
+        bodySize,nbrOfArm,lengthBones,widthBones,radiusArticulations,numberOfArticulations,muscleStrength = paramValues
+        creature = Creature(space, posX, posY,
+                            bodySize,nbrOfArm,lengthBones,widthBones,
+                            radiusArticulations,numberOfArticulations,
+                            muscleStrength )
+        self.bodyInSpace = creature
+        return self.bodyInSpace
 
 
 class Dna():
@@ -118,7 +161,11 @@ class Dna():
         return self.geneString
 
 
-    def gene_separation(self):
+    def geneSeparation(self):
+        """
+        sépare les éléments du string adn en une liste d'éléments de longueur 4
+        
+        """
 
         i = 0
         temp = ""
@@ -142,6 +189,14 @@ class Dna():
     
 
     def paramToDna(self,parameters):
+        """
+        Args:
+            parameters: a dictionnary countaining the parameters as 
+            keys and int as values
+
+        Returns:
+            Dna string
+        """
 
         divisionFactor={"bodySize": 15, "nbrOfArms": 1, "lengthBones": 50,
                          "widthBones": 4 , "radiusArticulations": 2,
@@ -166,11 +221,20 @@ class Dna():
         return self.geneString
     
     def dnaToParam(self,parameters):
+        """
+        Args:
+            a list of strings of the parameters names
+
+        Returns:
+            a dictionnary countaining the parameters names as keys 
+            and their values as ints
+        
+        """
 
         multiplicationFactor= [ 15,  1,  50, 4 ,  2, 0.5, 200, 1]
 
-        self.geneList = self.gene_separation()
-        print(self.geneList)
+        self.geneList = self.geneSeparation()
+
         tempList = []
         for i in range (len(self.geneList)):
             temp = int(self.geneList[i],2)
@@ -187,14 +251,19 @@ class Dna():
         if temp >= self.dataGene:
             temp = self.dataGene-1
         return temp
+    
+    def listToDictionnary(self,list):
 
+        
+        dico = dict(zip(list,PARAMETERS))
+        return dico
     
 
 """                                                                            
                         *****                  TESTING                     *****
 """                                                                             
     
-stringMale   = "00000000000000000000000000000000"
+"""stringMale   = "00000000000000000000000000000000"
 
 stringFemale = "11111111111111111111111111111111"
 
@@ -205,15 +274,13 @@ adnFemale = Dna(stringFemale)
 male = Individual(adnMale,None,None)
 female = Individual(adnFemale,None,None)
 
-"""for i in range(100):
+for i in range(100):
     guy = male.reproduce(male)
-    print(guy)"""
+    print(guy)
 
 creatureParameters = {"bodySize" : 30 , "nbrOfArms": 1, "lengthBones": 100,
                        "widthBones" : 10, "radiusArticulations":5,
                        "numberOfArticulations": 2, "muscleStrength": 1500}
 
-colinadn= male.reproduce(female)
-colin = colinadn.get_dna()
-dico = colin.dnaToParam(PARAMETERS)
-print(dico)
+param = list(creatureParameters.values())"""
+

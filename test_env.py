@@ -1,7 +1,8 @@
 import pymunk
 import pygame
 import pymunk.pygame_util
-from  members import *
+from genetique import *
+
 
 # Initialize Pygame and PyMunk
 pygame.init()
@@ -37,7 +38,23 @@ def run(window, width, height):
     space = pymunk.Space()
     space.gravity = (0,981)
 
-    frankenstein = Creature(space,500,600,30,1,50,10,5,2,1500)
+    #première gen
+    creatureParameters = {"bodySize" : 30 , "nbrOfArms": 1, "lengthBones": 100,
+                       "widthBones" : 10, "radiusArticulations":5,
+                       "numberOfArticulations": 2, "muscleStrength": 1000}
+    frankensteinDna = Dna(None)
+    frankensteinDna.paramToDna(creatureParameters)
+    frankenstein = Individual(frankensteinDna)
+    frankenstein.draw(space, 300,300)
+
+    #autres gen:
+    frankensteinjuniorDna = Dna(string="0100000101000010001000100010")
+    frankensteinJunior = Individual(frankensteinjuniorDna)
+    frankensteinJunior.draw(space, 0,0)
+
+
+
+
     create_boundaries(space, width, height)
     
 
