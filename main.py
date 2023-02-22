@@ -1,6 +1,7 @@
 import pymunk as pm
 import pymunk.pygame_util
 import pygame as pg
+import numpy as np
 import random
 import time
 import ui
@@ -37,22 +38,29 @@ class App:
 
 
     def start(self):
-        for i in range(self.genSize):
-            creature = Creature(self.env.space, 0, 50, 20, 2, 40, 5, 5, 1, 2000)
+        """for i in range(self.genSize):
+            creature = Creature(self.env.space, 0, 50, 20, 2, 40, 5, 5, 1, 2000, 2**i)
             positionTracker = PositionTracker()
             positionTracker.setObjectToFollow(creature.getCenterShape())
             dna = Dna(None).paramToDna(dict(zip(PARAMETERS,creature.parameters)))
             indinvidual = Individual(dna,creature)
             self.population.append(indinvidual)
-            self.trackers.append(positionTracker)
+            self.trackers.append(positionTracker)"""
+        
         startTime = time.time()
         currentTime = startTime
         while currentTime <= startTime + self.genTime:
+            print("start: {}, current : {}".format(startTime, currentTime))
             currentTime = time.time()
-        weights = [tracker.getMaxRanDistance() for tracker in self.trackers]
+        for tracker in self.trackers:
+            tracker.update()
+        weights = [tracker.getMaxRanDistance()*100 for tracker in self.trackers]
+        for weight in weights:
+            print("weight: {}, sum : {}".format(weight, sum(weights)))
+            weight = weight/sum(weights)
         newGeneration = []
         for i in range(self.genSize):
-            parent1, parent2 = random.choice(self.population,p=weights,size=2,replace=False)
+            parent1, parent2 = np.random.choice(self.population,size=2,replace=False,p=weights)
             child = parent1.reproduce(parent2)
             newGeneration.append(child)
         self.env.reset()
@@ -70,6 +78,16 @@ class App:
         distanceTracker = self.uiElements[1]
         distanceTracker.setObjectToFollow(self.population[0].get_bodyInSpace().getCenterShape())
         
+    def createGen(self):
+        for i in range(self.genSize):
+            creature = Creature(self.env.space, 0, 50, 20, 2, 40, 5, 5, 1, 2000, 2**i)
+            positionTracker = PositionTracker()
+            positionTracker.setObjectToFollow(creature.getCenterShape())
+            dna = Dna(None).paramToDna(dict(zip(PARAMETERS,creature.parameters)))
+            indinvidual = Individual(dna,creature)
+            self.population.append(indinvidual)
+            self.trackers.append(positionTracker)
+
     def reset(self):
         pass
     
