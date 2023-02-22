@@ -77,6 +77,7 @@ class Arm(BodyPart):
         self.space = space
         self.muscleStrength = muscleStrength
         self.bone1 = Bone(posX, posY, length, width)
+        self.bone1.get_shape().filter = pymunk.ShapeFilter(group=1)
         space.add(self.bone1.get_body(),self.bone1.get_shape())
         self.previousbone = self.bone1.get_body()
         
@@ -89,6 +90,8 @@ class Arm(BodyPart):
 
         bone = Bone((posX+(length+(articulationSize*2))*i),posY,length,width)
         articulation = Articulation(posX+(length + 2*articulationSize)*(i-1) +length/2+articulationSize, posY, articulationSize, 0)
+        bone.get_shape().filter = pymunk.ShapeFilter(group=1)
+        articulation.get_shape().filter = pymunk.ShapeFilter(group=1)
         self.space.add(bone.get_body(),bone.get_shape())
         self.space.add(articulation.get_body(),articulation.get_shape())
         joint1 =  pymunk.PivotJoint(self.previousbone,articulation.get_body(),(posX + (i-1)*(length+2*articulationSize)+length/2,posY))
@@ -101,7 +104,7 @@ class Arm(BodyPart):
 
 class Creature():
 
-    def __init__(self, space, posX, posY, bodySize, nbrOfArms, lengthBones, widthBones, radiusArticulations,numberOfArticulations, muscleStrength):
+    def __init__(self, space, posX, posY, bodySize, nbrOfArms, lengthBones, widthBones, radiusArticulations,numberOfArticulations, muscleStrength, collisionLayer = 1):
         
 
         self.parameters = [bodySize,nbrOfArms,lengthBones,widthBones,radiusArticulations,numberOfArticulations,muscleStrength]
@@ -109,6 +112,7 @@ class Creature():
         self.torso.round()
         body  = self.torso.get_body()
         shape = self.torso.get_shape()
+        shape.filter = pymunk.ShapeFilter(group=1)
 
         for i in range(nbrOfArms):
 

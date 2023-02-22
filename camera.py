@@ -23,7 +23,10 @@ class Camera:
         self.env = env
     
     def drawGraduations(self):
+        halfWindowSize = self.drawOptions.surface.get_width()
         for value, graduation in self.env.graduation.items():
+            if not self.objectPosition.x/100 - halfWindowSize/100 <= value or  not value <= self.objectPosition.x/100 + halfWindowSize/100:
+                continue
             text = pg.font.SysFont("Arial", 30).render(str(value),1,pg.Color(0,0,0))
             posx, posy = graduation.body.position
             textRect = text.get_rect(center=(posx + self.offset.x, posy + 375 - self.offset.y))

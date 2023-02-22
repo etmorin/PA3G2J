@@ -24,14 +24,9 @@ class Env:
             self.space.add(body, shape)
             self.graduation[i] = shape
         return shape
-        
-    def addObject(self):
-        body = pm.Body()
-        body.position = (self.window.get_width()/2, 60)
-        shape = pm.Circle(body, 20)
-        shape.mass = 10
-        self.space.add(body,shape)
-        return shape
-        
+ 
+    def reset(self):
+        self.__init__(self.window)
+    
     def step(self,dt):
         self.space.step(dt)

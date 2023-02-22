@@ -1,4 +1,5 @@
 import pygame as pg
+import pymunk as pm
 
 
 class PositionTracker():
@@ -17,7 +18,8 @@ class PositionTracker():
             return self.offset.x
 
     def getMaxRanDistance(self):
-        pass
+        #TODO a faire
+        return self.getRanDistance()
 
     def update(self):
         if not self.objectToFollow:
