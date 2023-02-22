@@ -128,12 +128,13 @@ class Individual():
 
         return dnaString
     
-    def draw(self, space, posX, posY):
+    def draw(self, space, posX, posY, maskCategory):
         """
         dessine une créature dans l'espace.
         Args:
             space: l'espace pymunk
             posX,posY : deux int pour la position
+            maskCategory: un bin indiquant la catégorie et le masque de collision
         Returns:
             un objet de type créature
         """
@@ -145,7 +146,7 @@ class Individual():
         creature = Creature(space, posX, posY,
                             bodySize,nbrOfArm,lengthBones,widthBones,
                             radiusArticulations,numberOfArticulations,
-                            muscleStrength )
+                            muscleStrength,maskCategory )
         self.bodyInSpace = creature
         return self.bodyInSpace
 
