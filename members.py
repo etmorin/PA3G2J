@@ -66,6 +66,7 @@ class Torso(BodyPart):
 
     def __init__(self, posX, posY, length, width, category):
         super().__init__(posX, posY, length, width,category)
+        self.category = category
 
 
     def round(self):

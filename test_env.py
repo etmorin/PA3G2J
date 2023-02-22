@@ -24,7 +24,6 @@ def create_boundaries(space, width, height):
     shape = pymunk.Poly.create_box(body,size)
     shape.elasticity = 0.4
     shape.friction = 0.5
-
     space.add(body,shape)
   
 
@@ -45,12 +44,12 @@ def run(window, width, height):
     frankensteinDna = Dna(None)
     frankensteinDna.paramToDna(creatureParameters)
     frankenstein = Individual(frankensteinDna)
-    frankenstein.draw(space, 300,300,1)
+    frankenstein.draw(space, 300,300,2)
 
     #autres gen:
-    frankensteinjuniorDna = Dna(string="0100000101000010001000100010")
+    frankensteinjuniorDna = Dna(string="0100001001000010001000100010")
     frankensteinJunior = Individual(frankensteinjuniorDna)
-    frankensteinJunior.draw(space, 0,0,1)
+    frankensteinJunior.draw(space, 300,300,1)
 
 
 

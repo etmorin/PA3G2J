@@ -135,6 +135,8 @@ class Individual():
             space: l'espace pymunk
             posX,posY : deux int pour la position
             maskCategory: un bin indiquant la catégorie et le masque de collision
+                        il faut que chaque category soit une puissance de 2 allant jusqu'à 32bit
+                        donc 1,2,4,8,16,32,64,....
         Returns:
             un objet de type créature
         """
