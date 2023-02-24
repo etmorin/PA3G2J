@@ -44,12 +44,17 @@ def run(window, width, height):
     frankensteinDna = Dna(None)
     frankensteinDna.paramToDna(creatureParameters)
     frankenstein = Individual(frankensteinDna)
-    frankenstein.draw(space, 300,300,2)
+    frankenstein.draw(space, 300,300,1)
 
     #autres gen:
-    frankensteinjuniorDna = Dna(string="0100001001000010001000100010")
-    frankensteinJunior = Individual(frankensteinjuniorDna)
-    frankensteinJunior.draw(space, 300,300,1)
+   
+    frankensteinJunior = Individual("0100001001000010001000100010")
+    frankensteinJunior.draw(space, 300,300,2)
+
+    franken2 = Dna(string="0100001001000010001000100010")
+    franken2body = Individual(franken2)
+    franken2body.draw(space,400,400,4)
+
 
 
 

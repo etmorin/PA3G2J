@@ -37,6 +37,7 @@ class Individual():
         self.dna = dna
         self.bodyInSpace = bodyInSpace
         self.mutationRiskPerThousand = 10
+        self.bestScore = 0
 
         if type(dna) == str :
             self.dna = Dna(dna)
@@ -261,6 +262,55 @@ class Dna():
         dico = dict(zip(list,PARAMETERS))
         return dico
     
+
+
+
+
+class Generation():
+
+    def __init__(self, depth) :
+        self.individualsList = []
+        self.generationDepth =  depth
+
+    def add_individual(self, individual):
+        self.individualsList.append(individual)
+
+    def get_individualList(self):
+        return self.individualsList
+    
+    def get_generationDepth(self):
+        return self.generationDepth
+    
+    def findBestIndividual(self,n):
+        """
+        Parcours la liste des individus et prend les n plus efficaces
+            Args:
+                n , le nombre d'individus recherchés
+            Return:
+                liste des n meilleurs individus
+        """
+        
+
+        bestIndividuals=[]
+
+        for i in range(n):
+            maxscore = 0
+            best = None
+            for individual in self.individualsList :
+                if individual.bestScore > maxscore :
+                    maxscore = individual.bestScore
+                    best = individual
+            bestIndividuals.append(best)
+        
+        return bestIndividuals
+    
+
+
+
+
+
+
+
 
 """                                                                            
                         *****                  TESTING                     *****
