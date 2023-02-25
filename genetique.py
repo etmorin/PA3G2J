@@ -270,16 +270,27 @@ class Generation():
 
     def __init__(self, depth) :
         self.individualsList = []
+        self.individualTrackersList = []
         self.generationDepth =  depth
 
     def add_individual(self, individual):
         self.individualsList.append(individual)
 
+    def add_individualTracker(self, individualTracker):
+        self.individualTrackersList.append(individualTracker)
+
     def get_individualList(self):
         return self.individualsList
     
+    def get_individualTrackerList(self):
+        return self.individualTrackersList
+    
     def get_generationDepth(self):
         return self.generationDepth
+    
+    def updateTrackers(self):
+        for tracker in self.individualTrackersList:
+            tracker.update()
     
     def findBestIndividual(self,n):
         """

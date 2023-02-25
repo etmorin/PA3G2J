@@ -28,9 +28,10 @@ class App:
         self.running = True
         self.genSize = 10
         self.genTime = 10
-        self.currentGen = 1
-        self.population = []
-        self.trackers = []
+        self.currentGen = 0
+        self.population = None
+        self.startTime = None
+        self.currentTime = None
         
         self.uiElements = []
         self.interactables = []
@@ -38,6 +39,18 @@ class App:
 
 
     def start(self):
+        
+        self.population = self.createGen()
+        self.startTime = time.time()
+        
+        timer = ui.GenTimer(self.physicsWindow)
+        self.uiElements.append(timer)
+
+        self.camera.setObjectToFollow(self.population.get_individualList()[0].get_bodyInSpace().getCenterShape())
+        distanceTracker = self.uiElements[1]
+        distanceTracker.setObjectToFollow(self.population.get_individualList()[0].get_bodyInSpace().getCenterShape())
+
+
         """for i in range(self.genSize):
             creature = Creature(self.env.space, 0, 50, 20, 2, 40, 5, 5, 1, 2000, 2**i)
             positionTracker = PositionTracker()
@@ -47,14 +60,7 @@ class App:
             self.population.append(indinvidual)
             self.trackers.append(positionTracker)"""
         
-        startTime = time.time()
-        currentTime = startTime
-        while currentTime <= startTime + self.genTime:
-            print("start: {}, current : {}".format(startTime, currentTime))
-            currentTime = time.time()
-        for tracker in self.trackers:
-            tracker.update()
-        weights = [tracker.getMaxRanDistance()*100 for tracker in self.trackers]
+        """weights = [tracker.getMaxRanDistance()*100 for tracker in self.trackers]
         for weight in weights:
             print("weight: {}, sum : {}".format(weight, sum(weights)))
             weight = weight/sum(weights)
@@ -71,22 +77,25 @@ class App:
             parameters["space"] = self.env.space
             parameters["posX"] = 0
             parameters["posY"] = 50
-            individual.set_bodyInSpace(Creature(**parameters))
+            individual.set_bodyInSpace(Creature(**parameters))"""
             
-            
-        self.camera.setObjectToFollow(self.population[0].get_bodyInSpace().getCenterShape())
-        distanceTracker = self.uiElements[1]
-        distanceTracker.setObjectToFollow(self.population[0].get_bodyInSpace().getCenterShape())
+        
         
     def createGen(self):
+        self.currentGen += 1
+        gen = Generation(self.currentGen)
         for i in range(self.genSize):
             creature = Creature(self.env.space, 0, 50, 20, 2, 40, 5, 5, 1, 2000, 2**i)
             positionTracker = PositionTracker()
             positionTracker.setObjectToFollow(creature.getCenterShape())
             dna = Dna(None).paramToDna(dict(zip(PARAMETERS,creature.parameters)))
             indinvidual = Individual(dna,creature)
-            self.population.append(indinvidual)
-            self.trackers.append(positionTracker)
+            gen.add_individual(indinvidual)
+            gen.add_individualTracker(positionTracker)
+        return gen
+    
+    def startNextGen(self):
+        pass
 
     def reset(self):
         pass
@@ -111,7 +120,15 @@ class App:
             if event.type == pg.MOUSEBUTTONDOWN:
                 for elem in self.interactables:
                     elem.checkClick()
-                
+    
+    def genHandler(self):
+        if not self.population:
+            return
+        self.currentTime = time.time()
+        self.uiElements[2].update(self.startTime, self.currentTime, self.genTime)
+        if self.currentTime >= self.startTime + self.genTime:
+            self.startNextGen()
+        
            
     def updateCamera(self):
         self.camera.update()
@@ -130,7 +147,7 @@ class App:
         clock = pg.time.Clock()
         while self.running:
             self.eventHandler(pg.event.get())
-
+            self.genHandler()
             self.draw()
             self.env.step(self.dt)
             clock.tick(self.fps)

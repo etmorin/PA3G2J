@@ -79,3 +79,18 @@ class DistanceCounter():
         self.update()
         textRect = self.text.get_rect(center=pg.Vector2(self.surface.get_rect().centerx,21))
         self.surface.blit(self.text, textRect)
+        
+class GenTimer():
+    def __init__(self, surface):
+        self.surface = surface
+        self.temps = None
+        self.style = pg.font.SysFont("Arial", 28)
+        
+    def update(self,startTime, currentTime, totalTime):
+        self.temps = totalTime - (currentTime-startTime)
+        self.text = self.style.render("{:.2f}s".format(self.temps),1,pg.Color(0,0,0))
+
+    def draw(self):
+        topleft = self.surface.get_rect().topleft
+        textRect = self.text.get_rect(topleft=pg.Vector2(topleft[0] + 10, topleft[1] + 10))
+        self.surface.blit(self.text, textRect)
