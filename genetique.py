@@ -283,7 +283,7 @@ class Generation():
             self.createFirstGen(size)
 
     def __str__(self):
-        string = "Generation of  depth :"
+        string = "Generation of  depth : "
         string += str(self.generationDepth)
         string +="\n"
         for individual in self.individualsList:
@@ -326,7 +326,7 @@ class Generation():
             maxscore = 0
             best = None
             for individual in self.individualsList :
-                if individual.bestScore >= maxscore :
+                if individual.bestScore >= maxscore and individual not in bestIndividuals :
                     maxscore = individual.bestScore
                     best = individual
             bestIndividuals.append(best)
@@ -384,7 +384,7 @@ class Generation():
                         *****                  TESTING                     *****
 """                                                                             
     
-stringMale   = "00000000000000000000000000000000"
+"""stringMale   = "00000000000000000000000000000000"
 
 stringFemale = "11111111111111111111111111111111"
 
@@ -400,5 +400,18 @@ for i in range(100):
 creatureParameters = {"bodySize" : 30 , "nbrOfArms": 1, "lengthBones": 100,
                        "widthBones" : 10, "radiusArticulations":5,
                        "numberOfArticulations": 2, "muscleStrength": 1500}
+"""
 
+"""
+        Ici exemple fonctionnement génération
+"""
 
+"""firstGen = Generation(0,5)
+print(firstGen)
+
+previousGen = firstGen
+
+for i in range(100):
+    currentGen = previousGen.createNextGeneration(5)
+    print(currentGen)
+    previousGen = currentGen"""
