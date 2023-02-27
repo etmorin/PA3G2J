@@ -4,6 +4,7 @@ from members import *
 PARAMETERS = ["bodySize", "nbrOfArms", "lengthBones",
                        "widthBones", "radiusArticulations",
                        "numberOfArticulations", "muscleStrength"]
+ADN_LENGTH = 32
 
 """
     /!\ : TEMPORAIRE :  /!\ 
@@ -76,22 +77,28 @@ class Individual():
         """
 
         otherDna = mate.get_dna()
-        newDnaString = self.mixingDna(self.dna,otherDna) 
+
+        reproductionMode = random.randint(0,2)
+
+        newDnaString = self.mixingDna(self.dna,otherDna, reproductionMode) 
         newDnaString = self.mutationCenter(newDnaString)
         newDna = Dna(newDnaString)
         child = Individual(newDna,father = self,mother = mate)
         return child
     
-    def mixingDna(self, mydna, matedna):
+    def mixingDna(self, mydna, matedna, mode):
         """
         Mélange deux objets de type ADN
         Args:
             mydna, matedna: objets de type ADN
+            mode , un int entre 0 et 2 qui décide quel parent aura une part prioritaire sur l'adn de l'enfant
         
         returns:
             string utilisable par objet adn
         
         """
+        reproductionFactor = [10, 15, 5]
+        myFactor = reproductionFactor[mode]
 
         dna1 = mydna.get_geneString()
         dna2 = matedna.get_geneString()
@@ -99,9 +106,9 @@ class Individual():
 
         for i in range(len(dna1)):
             if dna1[i] != dna2[i]:
-                chance = random.randint(0,1)
+                chance = random.randint(1,20)
 
-                if chance == 0:
+                if chance >= myFactor:
                     newDnaString += dna2[i]
                 else:
                     newDnaString += dna1[i]
@@ -268,10 +275,21 @@ class Dna():
 
 class Generation():
 
-    def __init__(self, depth) :
+    def __init__(self, depth,size) :
         self.individualsList = []
         self.individualTrackersList = []
         self.generationDepth =  depth
+        if depth == 0:
+            self.createFirstGen(size)
+
+    def __str__(self):
+        string = "Generation of  depth :"
+        string += str(self.generationDepth)
+        string +="\n"
+        for individual in self.individualsList:
+            string+=individual.dna.get_geneString()
+            string += "\n"
+        return string
 
     def add_individual(self, individual):
         self.individualsList.append(individual)
@@ -308,18 +326,57 @@ class Generation():
             maxscore = 0
             best = None
             for individual in self.individualsList :
-                if individual.bestScore > maxscore :
+                if individual.bestScore >= maxscore :
                     maxscore = individual.bestScore
                     best = individual
             bestIndividuals.append(best)
         
         return bestIndividuals
     
+    def createNextGeneration(self, sizeOfGeneration):
+        """
+        Créé une génération de taille n = int en prenant comme parent les deux individus les plus forts de cette génération.
+            Args:
+                sizeOfGeneration: un int la taille voulue de la nouvelle gen
+            returns:
+                newGen : un objet de type génération contenant sizeOfGeneration individus
+        
+        """
+
+        bestIndividuals = self.findBestIndividual(2)
+        newGen  = Generation (self.generationDepth+1,sizeOfGeneration)
+        
+        for i in range (sizeOfGeneration):
+            newIndividual = bestIndividuals[0].reproduce(bestIndividuals[1])
+            newGen.add_individual(newIndividual)
+
+        return newGen
+    
+    def createFirstGen(self, sizeOfGeneration):
+        """
+        Crée la premiere génération totalement aléatoirement
+            Args:
+                sizeOfGeneration: un int la taille voulue de la nouvelle gen
+            returns:
+                None (transforme cet objet génération)
+        """
+
+
+        for i in range(sizeOfGeneration):
+
+            adnString = ""
+
+            for j in range(ADN_LENGTH):
+
+                oneOrZero = random.randint(0,1)
+                adnString += str(oneOrZero)
+            
+            newIndividual = Individual(adnString)
+            self.individualsList.append(newIndividual)
 
 
 
-
-
+            
 
 
 
@@ -327,24 +384,21 @@ class Generation():
                         *****                  TESTING                     *****
 """                                                                             
     
-"""stringMale   = "00000000000000000000000000000000"
+stringMale   = "00000000000000000000000000000000"
 
 stringFemale = "11111111111111111111111111111111"
 
 
-adnMale = Dna(stringMale)
-adnFemale = Dna(stringFemale)
 
-male = Individual(adnMale,None,None)
-female = Individual(adnFemale,None,None)
+male = Individual(stringMale)
+female = Individual(stringFemale)
 
 for i in range(100):
-    guy = male.reproduce(male)
+    guy = male.reproduce(female)
     print(guy)
 
 creatureParameters = {"bodySize" : 30 , "nbrOfArms": 1, "lengthBones": 100,
                        "widthBones" : 10, "radiusArticulations":5,
                        "numberOfArticulations": 2, "muscleStrength": 1500}
 
-param = list(creatureParameters.values())"""
 

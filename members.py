@@ -2,7 +2,7 @@ import pygame
 import pymunk
 import pymunk.pygame_util
 import math
-from genetique import *
+
 
 """
 Pour une créature, il faut trois éléments,
