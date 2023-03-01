@@ -280,6 +280,7 @@ class Generation():
         self.individualsList = []
         self.individualTrackersList = []
         self.generationDepth =  depth
+        self.size = size
         if depth == 0:
             self.createFirstGen(size)
 
@@ -310,6 +311,9 @@ class Generation():
     def updateTrackers(self):
         for tracker in self.individualTrackersList:
             tracker.update()
+
+    def get_generationSize(self):
+        return self.size
     
     def findBestIndividual(self,n):
         """
@@ -419,11 +423,11 @@ for i in range(100):
 
 class Handler():
 
-    def __init__(self, firstGeneration, genSize, repetitions, wantedLapse):
+    def __init__(self, firstGeneration, repetitions, wantedLapse):
 
         self.currentGen = firstGeneration
         self.repetitions = repetitions
-        self.genSize = genSize
+        self.genSize = firstGeneration.get_generationSize()
         self.wantedLapse = wantedLapse
 
     def handling(self):
@@ -450,5 +454,5 @@ class Handler():
             self.handling()
 
 firstGen = Generation(0,5)
-run = Handler(firstGen, 5, 100, 5)
+run = Handler(firstGen, 100, 5)
 run.start()
