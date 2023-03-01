@@ -80,36 +80,6 @@ if __name__ == "__main__":
     run(window, WIDTH, HEIGHT)
 
 
-class Handler():
-
-    def __init__(self, firstGeneration, genSize, repetitions):
-
-        self.currentGen = firstGeneration
-        self.repetitions = repetitions
-        self.genSize = genSize
-
-    def handling(self):
-
-        self.startTime = time.perf_counter()
-        self.currentTime = time.perf_counter()
-
-        while self.currentTime - self.startTime < 20 :
-            
-            for individual in self.currentGen.individualsList:
-                
-                todo = "draw et faire la course"
-
-            self.currentTime = time.perf_counter()
-        
-
-        self.currentGen = self.currentGen.createNextGeneration(self.genSize)
-        
-
-
-    def repetor(self):
-
-        for i in range (self.repetitions):
-            self.handling()
 
 
 

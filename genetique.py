@@ -1,5 +1,6 @@
 import random
 from members import *
+import time
 
 PARAMETERS = ["bodySize", "nbrOfArms", "lengthBones",
                        "widthBones", "radiusArticulations",
@@ -415,3 +416,39 @@ for i in range(100):
     currentGen = previousGen.createNextGeneration(5)
     print(currentGen)
     previousGen = currentGen"""
+
+class Handler():
+
+    def __init__(self, firstGeneration, genSize, repetitions, wantedLapse):
+
+        self.currentGen = firstGeneration
+        self.repetitions = repetitions
+        self.genSize = genSize
+        self.wantedLapse = wantedLapse
+
+    def handling(self):
+
+        self.startTime = time.perf_counter()
+        self.currentTime = time.perf_counter()
+
+        while self.currentTime - self.startTime < self.wantedLapse :
+            
+            for individual in self.currentGen.individualsList:
+                
+                todo = "draw et faire la course"
+
+            self.currentTime = time.perf_counter()
+        
+        print(self.currentGen)
+        self.currentGen = self.currentGen.createNextGeneration(self.genSize)
+        
+
+
+    def repetor(self):
+
+        for i in range (self.repetitions):
+            self.handling()
+
+firstGen = Generation(0,5)
+run = Handler(firstGen, 5, 100, 5)
+run.repetor()
