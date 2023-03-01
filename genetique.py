@@ -444,11 +444,11 @@ class Handler():
         
 
 
-    def repetor(self):
+    def start(self):
 
         for i in range (self.repetitions):
             self.handling()
 
 firstGen = Generation(0,5)
 run = Handler(firstGen, 5, 100, 5)
-run.repetor()
+run.start()
