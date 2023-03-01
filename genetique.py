@@ -1,5 +1,6 @@
 import random
 from members import *
+from positionTracker import *
 import time
 
 PARAMETERS = ["bodySize", "nbrOfArms", "lengthBones",
@@ -38,6 +39,7 @@ class Individual():
         self.mother = mother
         self.dna = dna
         self.bodyInSpace = bodyInSpace
+        self.positionTracker = PositionTracker()
         self.mutationRiskPerThousand = 10
         self.bestScore = 0
 
@@ -61,9 +63,20 @@ class Individual():
     
     def set_bodyInSpace(self, bodyInSpace):
         self.bodyInSpace = bodyInSpace
+        
+    def get_currentScore(self):
+        self.updateTracker()
+        return self.positionTracker.getRanDistance()
+    
+    def get_bestScore(self):
+        self.updateTracker()
+        return self.positionTracker.getMaxRanDistance()
     
     def set_mutationRisk(self, newMutationRisk):
         self.mutationRiskPerThousand = newMutationRisk
+        
+    def updateTracker(self):
+        self.positionTracker.update()
 
     def reproduce(self,mate):
         """
@@ -137,7 +150,7 @@ class Individual():
 
         return dnaString
     
-    def draw(self, space, posX, posY, maskCategory):
+    def createBody(self, space, posX, posY, maskCategory):
         """
         dessine une créature dans l'espace.
         Args:
@@ -276,11 +289,11 @@ class Dna():
 
 class Generation():
 
-    def __init__(self, depth,size) :
+    def __init__(self, depth, size, space) :
         self.individualsList = []
-        self.individualTrackersList = []
         self.generationDepth =  depth
         self.size = size
+        self.space = space
         if depth == 0:
             self.createFirstGen(size)
 
@@ -302,15 +315,13 @@ class Generation():
     def get_individualList(self):
         return self.individualsList
     
-    def get_individualTrackerList(self):
-        return self.individualTrackersList
     
     def get_generationDepth(self):
         return self.generationDepth
     
     def updateTrackers(self):
-        for tracker in self.individualTrackersList:
-            tracker.update()
+        for individual in self.individualsList:
+            individual.updateTracker()
 
     def get_generationSize(self):
         return self.size
@@ -330,9 +341,10 @@ class Generation():
         for i in range(n):
             maxscore = 0
             best = None
-            for individual in self.individualsList :
-                if individual.bestScore >= maxscore and individual not in bestIndividuals :
-                    maxscore = individual.bestScore
+            for individual in self.individualsList:
+                score = individual.get_bestScore()
+                if score >= maxscore and individual not in bestIndividuals :
+                    maxscore = score
                     best = individual
             bestIndividuals.append(best)
         
@@ -349,7 +361,7 @@ class Generation():
         """
 
         bestIndividuals = self.findBestIndividual(2)
-        newGen  = Generation (self.generationDepth+1,sizeOfGeneration)
+        newGen  = Generation(self.generationDepth+1,sizeOfGeneration, self.space)
         
         for i in range (sizeOfGeneration):
             newIndividual = bestIndividuals[0].reproduce(bestIndividuals[1])
@@ -377,6 +389,7 @@ class Generation():
                 adnString += str(oneOrZero)
             
             newIndividual = Individual(adnString)
+            newIndividual.createBody(self.space, 0, 100, 2**i)
             self.individualsList.append(newIndividual)
 
 
@@ -453,6 +466,6 @@ class Handler():
         for i in range (self.repetitions):
             self.handling()
 
-firstGen = Generation(0,5)
+"""firstGen = Generation(0,5)
 run = Handler(firstGen, 100, 5)
-run.start()
+run.start()"""

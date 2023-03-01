@@ -8,21 +8,24 @@ class PositionTracker():
         self.startPosition = pg.Vector2(0,0)
         self.objectPosition = None
         self.offset = None
+        self.ranDistance = 0.0
+        self.maxRanDistance = 0.0
     
     def setObjectToFollow(self, newObject):
         self.objectToFollow = newObject
         self.startPosition = newObject.body.position
 
     def getRanDistance(self):
-        if self.offset:
-            return self.offset.x
+        return self.ranDistance
 
     def getMaxRanDistance(self):
-        #TODO a faire
-        return self.getRanDistance()
+        return self.maxRanDistance
 
     def update(self):
         if not self.objectToFollow:
             return
         self.objectPosition = self.objectToFollow.body.position 
         self.offset = pm.Vec2d(self.objectPosition.x - self.startPosition.x, self.objectPosition.y - self.startPosition.y)
+        self.ranDistance = self.offset.x
+        if self.offset.x > self.maxRanDistance:
+            self.maxRanDistance = self.offset.x

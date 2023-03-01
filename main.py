@@ -26,28 +26,27 @@ class App:
         self.camera.setDrawOptions(self.drawOptions)
         self.camera.setEnv(self.env)
         self.running = True
-        self.genSize = 10
+        self.genSize = 2
         self.genTime = 10
         self.currentGen = 0
         self.population = None
         self.startTime = None
         self.currentTime = None
         
-        self.uiElements = []
-        self.interactables = []
+        self.uiElements = {}
+        self.interactables = {}
         self.setupUI()
 
 
     def start(self):
         
-        self.population = self.createGen()
+        self.population = Generation(self.currentGen, self.genSize, self.env.space)
         self.startTime = time.time()
         
         timer = ui.GenTimer(self.physicsWindow)
-        self.uiElements.append(timer)
+        self.uiElements["timer"] = timer
 
-        self.camera.setObjectToFollow(self.population.get_individualList()[0].get_bodyInSpace().getCenterShape())
-        distanceTracker = self.uiElements[1]
+        distanceTracker = self.uiElements["distanceCounter"]
         distanceTracker.setObjectToFollow(self.population.get_individualList()[0].get_bodyInSpace().getCenterShape())
 
 
@@ -81,31 +80,31 @@ class App:
             
         
         
-    def createGen(self):
-        self.currentGen += 1
-        gen = Generation(self.currentGen)
-        for i in range(self.genSize):
-            creature = Creature(self.env.space, 0, 50, 20, 2, 40, 5, 5, 1, 2000, 2**i)
-            positionTracker = PositionTracker()
-            positionTracker.setObjectToFollow(creature.getCenterShape())
-            dna = Dna(None).paramToDna(dict(zip(PARAMETERS,creature.parameters)))
-            indinvidual = Individual(dna,creature)
-            gen.add_individual(indinvidual)
-            gen.add_individualTracker(positionTracker)
-        return gen
     
     def startNextGen(self):
-        pass
+        self.currentGen += 1
+        newPopulation = self.population.createNextGeneration(self.genSize)
+        self.population = newPopulation
+        self.env.reset()
+        i = 0
+        for individual in self.population.get_individualList():
+            individual.createBody(self.env.space, 0, 100, 2**i)
+            i += 1
+        self.startTime = time.time()
 
     def reset(self):
-        pass
+        del self.uiElements["timer"]
+        self.uiElements["distanceCounter"].reset()
+        self.population = None
+        self.env.reset()
+        self.run()
     
     def setupUI(self):
         startButton = ui.ToggleButton("Start", "Reset", (860,650),(100,50), self.window, lambda:self.start(), lambda:self.reset())
-        self.interactables.append(startButton)
-        self.uiElements.append(startButton)
+        self.interactables["startButton"] = startButton
+        self.uiElements["startButton"] = startButton
         distanceCounter = ui.DistanceCounter(self.window)
-        self.uiElements.append(distanceCounter)
+        self.uiElements["distanceCounter"] = distanceCounter
 
     
     def eventHandler(self, events):
@@ -119,18 +118,26 @@ class App:
                 
             if event.type == pg.MOUSEBUTTONDOWN:
                 for elem in self.interactables:
-                    elem.checkClick()
+                    self.interactables[elem].checkClick()
     
     def genHandler(self):
         if not self.population:
             return
         self.currentTime = time.time()
-        self.uiElements[2].update(self.startTime, self.currentTime, self.genTime)
+        self.uiElements["timer"].update(self.startTime, self.currentTime, self.genTime)
         if self.currentTime >= self.startTime + self.genTime:
             self.startNextGen()
         
            
     def updateCamera(self):
+        if self.population:
+            bestScore = -100.0
+            bestIndividual = None
+            for individual in self.population.get_individualList():
+                 score = individual.get_currentScore()
+                 if score > bestScore:
+                     bestIndividual = individual
+            self.camera.setObjectToFollow(individual.get_bodyInSpace().getCenterShape())
         self.camera.update()
  
 
@@ -139,7 +146,8 @@ class App:
         self.physicsWindow.fill("white")
         self.updateCamera()
         for elem in self.uiElements:
-            elem.draw()
+            print(elem)
+            self.uiElements[elem].draw()
         pg.display.update()
 
 

@@ -79,6 +79,9 @@ class DistanceCounter():
         self.update()
         textRect = self.text.get_rect(center=pg.Vector2(self.surface.get_rect().centerx,21))
         self.surface.blit(self.text, textRect)
+    
+    def reset(self):
+        self.__init__(self.surface)
         
 class GenTimer():
     def __init__(self, surface):
