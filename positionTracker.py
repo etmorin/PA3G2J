@@ -16,10 +16,10 @@ class PositionTracker():
         self.startPosition = newObject.body.position
 
     def getRanDistance(self):
-        return self.ranDistance
+        return self.ranDistance/100
 
     def getMaxRanDistance(self):
-        return self.maxRanDistance
+        return self.maxRanDistance/100
 
     def update(self):
         if not self.objectToFollow:

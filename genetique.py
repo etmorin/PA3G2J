@@ -172,6 +172,7 @@ class Individual():
                             radiusArticulations,numberOfArticulations,
                             muscleStrength,maskCategory )
         self.bodyInSpace = creature
+        self.positionTracker.setObjectToFollow(self.bodyInSpace.getCenterShape())
         return self.bodyInSpace
 
 
@@ -223,8 +224,8 @@ class Dna():
             Dna string
         """
 
-        divisionFactor={"bodySize": 15, "nbrOfArms": 1, "lengthBones": 50,
-                         "widthBones": 4 , "radiusArticulations": 2,
+        divisionFactor={"bodySize": 7, "nbrOfArms": 1, "lengthBones": 25,
+                         "widthBones": 2 , "radiusArticulations": 1.5,
                          "numberOfArticulations": 0.5, "muscleStrength": 200}
         self.geneString=""
 
@@ -256,7 +257,7 @@ class Dna():
         
         """
 
-        multiplicationFactor= [ 15,  1,  50, 4 ,  2, 0.5, 200, 1]
+        multiplicationFactor= [ 7,  1,  25, 2 ,  1.5, 0.5, 200, 1]
 
         self.geneList = self.geneSeparation()
 
@@ -308,9 +309,7 @@ class Generation():
 
     def add_individual(self, individual):
         self.individualsList.append(individual)
-
-    def add_individualTracker(self, individualTracker):
-        self.individualTrackersList.append(individualTracker)
+        
 
     def get_individualList(self):
         return self.individualsList

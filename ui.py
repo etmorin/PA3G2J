@@ -63,16 +63,13 @@ class DistanceCounter():
         self.surface = surface
         self.distance = 0.00
         self.style = pg.font.SysFont("Arial", 28)
-        self.positionTracker = PositionTracker()
-        if objectToFollow:
-            self.positionTracker.setObjectToFollow(objectToFollow)
+        self.individualToFollow = None
 
-    def setObjectToFollow(self, objectToFollow):
-        self.positionTracker.setObjectToFollow(objectToFollow)
+    def setObjectToFollow(self, individualToFollow):
+        self.individualToFollow = individualToFollow
 
     def update(self):
-        self.positionTracker.update()
-        self.distance = float(self.positionTracker.getRanDistance()/100) if self.positionTracker.getRanDistance() else self.distance
+        self.distance = self.individualToFollow.get_currentScore() if self.individualToFollow else 0.00
         self.text = self.style.render("Distance parcourue: {:.2f}m".format(self.distance),1,pg.Color(0,0,0))
 
     def draw(self):

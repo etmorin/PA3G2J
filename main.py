@@ -46,8 +46,6 @@ class App:
         timer = ui.GenTimer(self.physicsWindow)
         self.uiElements["timer"] = timer
 
-        distanceTracker = self.uiElements["distanceCounter"]
-        distanceTracker.setObjectToFollow(self.population.get_individualList()[0].get_bodyInSpace().getCenterShape())
 
 
         """for i in range(self.genSize):
@@ -135,9 +133,14 @@ class App:
             bestIndividual = None
             for individual in self.population.get_individualList():
                  score = individual.get_currentScore()
+                 print("score: " + str(score))
                  if score > bestScore:
+                     print(str(score) + ">" + str(bestScore))
+                     bestScore = score
                      bestIndividual = individual
-            self.camera.setObjectToFollow(individual.get_bodyInSpace().getCenterShape())
+            print("bestScore: " + str(bestScore))
+            self.camera.setObjectToFollow(bestIndividual.get_bodyInSpace().getCenterShape())
+            self.uiElements["distanceCounter"].setObjectToFollow(bestIndividual)
         self.camera.update()
  
 
@@ -146,7 +149,6 @@ class App:
         self.physicsWindow.fill("white")
         self.updateCamera()
         for elem in self.uiElements:
-            print(elem)
             self.uiElements[elem].draw()
         pg.display.update()
 
