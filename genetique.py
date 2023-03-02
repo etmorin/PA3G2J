@@ -6,6 +6,9 @@ import time
 PARAMETERS = ["bodySize", "nbrOfArms", "lengthBones",
                        "widthBones", "radiusArticulations",
                        "numberOfArticulations", "muscleStrength"]
+
+PARAM_MIN_MAX = [[10,121], [1,16],[10,100], [5,60],[2,32],[1,7],[200,6400]]
+
 ADN_LENGTH = 32
 
 """
@@ -226,13 +229,15 @@ class Dna():
 
         divisionFactor={"bodySize": 4, "nbrOfArms": 0.5, "lengthBones": 7,
                          "widthBones": 2 , "radiusArticulations": 1.5,
-                         "numberOfArticulations": 0.5, "muscleStrength": 200}
+                         "numberOfArticulations": 0.5, "muscleStrength": 300}
         self.geneString=""
+        i=0
 
         for parameter in parameters:
+    
             temp = parameters[parameter]/divisionFactor[parameter]
-            if temp == 0 :
-                temp ==1
+            temp = self.paramSizeControl(temp,i)
+            i+=1
             temp = self.control(temp)
             temp = str(bin(int(temp)))
             temp= temp[2:]      #on retire le 0b de la notation binaire
@@ -259,21 +264,29 @@ class Dna():
         
         """
 
-        multiplicationFactor= [ 4,  0.5,  7, 2 ,  1.5, 0.5, 200, 1]
+        multiplicationFactor= [ 4,  0.5,  7, 2 ,  1.5, 0.5, 300]
 
         self.geneList = self.geneSeparation()
 
         tempList = []
-        for i in range (len(self.geneList)):
+        for i in range (len(self.geneList)-1): # -1 car encore 4bit nons utilisés
             temp = int(self.geneList[i],2)
-            if temp ==0:
-                temp = 1
+            temp = self.paramSizeControl(temp,i)
 
             tempList.append(temp*multiplicationFactor[i])
 
         dictionnary = dict(zip(parameters,tempList))
         return dictionnary
 
+    def paramSizeControl(self,temp,i):
+
+        if temp < PARAM_MIN_MAX[i][0]:
+            temp = PARAM_MIN_MAX[i][0]
+
+        elif temp > PARAM_MIN_MAX[i][1]:
+            temp = PARAM_MIN_MAX[i][1]
+        
+        return temp
 
 
     def control(self,temp):
