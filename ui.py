@@ -94,3 +94,23 @@ class GenTimer():
         topleft = self.surface.get_rect().topleft
         textRect = self.text.get_rect(topleft=pg.Vector2(topleft[0] + 10, topleft[1] + 10))
         self.surface.blit(self.text, textRect)
+        
+"""
+class gen_modifier():
+    def __init__(self, surface):
+        self.surface = surface
+        self.temps = None
+        self.style = pg.font.SysFont("Arial", 28)
+    
+    def timeGen():
+        Menu pour gérer le temps d'une generation
+    
+        sliderTime = plt.axes([0.2 0.45, 0.7, 0.05])
+
+    def numberGen():
+        Menu pour gérer le nombre de generation
+        pass
+
+    def sizeGen():
+        Menu pour gérer la taille d'une generation
+        pass"""

@@ -16,16 +16,16 @@ class PositionTracker():
         self.startPosition = newObject.body.position
 
     def getRanDistance(self):
-        return self.ranDistance/100
+        return self.ranDistance
 
     def getMaxRanDistance(self):
-        return self.maxRanDistance/100
+        return self.maxRanDistance
 
     def update(self):
         if not self.objectToFollow:
             return
         self.objectPosition = self.objectToFollow.body.position 
         self.offset = pm.Vec2d(self.objectPosition.x - self.startPosition.x, self.objectPosition.y - self.startPosition.y)
-        self.ranDistance = self.offset.x
+        self.ranDistance = self.offset.x/100
         if self.offset.x > self.maxRanDistance:
-            self.maxRanDistance = self.offset.x
+            self.maxRanDistance = self.offset.x/100
