@@ -20,11 +20,11 @@ ADN_LENGTH = 32
 
     Nos alleles:
 
-    longueur os : 1 -> 750 , par pas de 50
+    longueur os : 1 -> 325 , par pas de 25
     largeurs os : 1 -> 60 , par pas de 4
     nombre bras : 1 -> 16 , par pas de 1
     nombre articulations: 1 -> 7 , par pas de 0,5, arrondis à l'inférieur
-    taille du corps: 16 -> 242 , par pas de 16
+    taille du corps: 16 -> 121 , par pas de 8
     taille articulation: 1 -> 32 , par pas de 2
     puissance muscle: 200 -> 3200 , par pas de 200
     vecteur changement taille des membres: 1 -> 16 , par pas de 1
@@ -224,13 +224,15 @@ class Dna():
             Dna string
         """
 
-        divisionFactor={"bodySize": 7, "nbrOfArms": 1, "lengthBones": 25,
+        divisionFactor={"bodySize": 4, "nbrOfArms": 0.5, "lengthBones": 7,
                          "widthBones": 2 , "radiusArticulations": 1.5,
                          "numberOfArticulations": 0.5, "muscleStrength": 200}
         self.geneString=""
 
         for parameter in parameters:
             temp = parameters[parameter]/divisionFactor[parameter]
+            if temp == 0 :
+                temp ==1
             temp = self.control(temp)
             temp = str(bin(int(temp)))
             temp= temp[2:]      #on retire le 0b de la notation binaire
@@ -257,13 +259,15 @@ class Dna():
         
         """
 
-        multiplicationFactor= [ 7,  1,  25, 2 ,  1.5, 0.5, 200, 1]
+        multiplicationFactor= [ 4,  0.5,  7, 2 ,  1.5, 0.5, 200, 1]
 
         self.geneList = self.geneSeparation()
 
         tempList = []
         for i in range (len(self.geneList)):
             temp = int(self.geneList[i],2)
+            if temp ==0:
+                temp = 1
 
             tempList.append(temp*multiplicationFactor[i])
 
