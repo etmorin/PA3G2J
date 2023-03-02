@@ -108,7 +108,6 @@ class GenCounter():
         self.style = pg.font.SysFont("Arial", 24)
         
     def next(self):
-        print("next")
         self.currentGen += 1
         self.update()
         
