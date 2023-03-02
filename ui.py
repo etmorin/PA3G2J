@@ -105,7 +105,7 @@ class GenCounter():
     def __init__(self, surface):
         self.surface = surface
         self.currentGen = 0
-        self.style = pg.font.SysFont("Arial", 24)
+        self.style = pg.font.SysFont("Arial", 20)
         
     def next(self):
         self.currentGen += 1
