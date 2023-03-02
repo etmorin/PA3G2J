@@ -26,7 +26,7 @@ class App:
         self.camera.setDrawOptions(self.drawOptions)
         self.camera.setEnv(self.env)
         self.running = True
-        self.genSize = 2
+        self.genSize = 5
         self.genTime = 10
         self.currentGen = 0
         self.maxGen = 100
