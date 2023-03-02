@@ -93,8 +93,39 @@ class GenTimer():
     def draw(self):
         topleft = self.surface.get_rect().topleft
         textRect = self.text.get_rect(topleft=pg.Vector2(topleft[0] + 10, topleft[1] + 10))
+        backgroundRect = textRect.copy()
+        backgroundRect.top -= 5
+        backgroundRect.left -= 5
+        backgroundRect.height += 10
+        backgroundRect.width += 10
+        pg.draw.rect(self.surface, pg.Color(236, 240, 241), backgroundRect)
         self.surface.blit(self.text, textRect)
         
+class GenCounter():
+    def __init__(self, surface):
+        self.surface = surface
+        self.currentGen = 0
+        self.style = pg.font.SysFont("Arial", 24)
+        
+    def next(self):
+        print("next")
+        self.currentGen += 1
+        self.update()
+        
+    def reset(self):
+        self.currentGen = 0
+        self.update()
+        
+    def update(self):
+        self.text = self.style.render("Génération actuelle : {}".format(self.currentGen),1,pg.Color(0,0,0))
+
+    def draw(self):
+        if self.currentGen == 0:
+            return
+        topleft = self.surface.get_rect().topleft
+        textRect = self.text.get_rect(topleft=pg.Vector2(topleft[0] + 5, topleft[1] + 40))
+        self.surface.blit(self.text, textRect)
+
 """
 class gen_modifier():
     def __init__(self, surface):

@@ -38,14 +38,16 @@ class App:
         self.interactables = {}
         self.setupUI()
 
-
     def start(self):
-        
         self.population = Generation(self.currentGen, self.genSize, self.env.space)
+        self.currentGen += 1
         self.startTime = time.time()
         
         timer = ui.GenTimer(self.physicsWindow)
         self.uiElements["timer"] = timer
+        counter = ui.GenCounter(self.window)
+        counter.next()
+        self.uiElements["genCounter"] = counter
 
 
 
@@ -82,6 +84,7 @@ class App:
     
     def startNextGen(self):
         self.currentGen += 1
+        self.uiElements["genCounter"].next()
         newPopulation = self.population.createNextGeneration(self.genSize)
         self.population = newPopulation
         self.env.reset()
@@ -94,6 +97,7 @@ class App:
     def reset(self):
         del self.uiElements["timer"]
         self.uiElements["distanceCounter"].reset()
+        self.uiElements["genCounter"].reset()
         self.population = None
         self.currentGen = 0
         self.env.reset()
@@ -135,12 +139,9 @@ class App:
             bestIndividual = None
             for individual in self.population.get_individualList():
                  score = individual.get_currentScore()
-                 print("score: " + str(score))
                  if score > bestScore:
-                     print(str(score) + ">" + str(bestScore))
                      bestScore = score
                      bestIndividual = individual
-            print("bestScore: " + str(bestScore))
             self.camera.setObjectToFollow(bestIndividual.get_bodyInSpace().getCenterShape())
             self.uiElements["distanceCounter"].setObjectToFollow(bestIndividual)
         self.camera.update()
