@@ -29,6 +29,7 @@ class App:
         self.genSize = 2
         self.genTime = 10
         self.currentGen = 0
+        self.maxGen = 100
         self.population = None
         self.startTime = None
         self.currentTime = None
@@ -94,6 +95,7 @@ class App:
         del self.uiElements["timer"]
         self.uiElements["distanceCounter"].reset()
         self.population = None
+        self.currentGen = 0
         self.env.reset()
         self.run()
     
@@ -119,7 +121,7 @@ class App:
                     self.interactables[elem].checkClick()
     
     def genHandler(self):
-        if not self.population:
+        if not self.population or self.currentGen == self.maxGen:
             return
         self.currentTime = time.time()
         self.uiElements["timer"].update(self.startTime, self.currentTime, self.genTime)
