@@ -7,7 +7,7 @@ PARAMETERS = ["bodySize", "nbrOfArms", "lengthBones",
                        "widthBones", "radiusArticulations",
                        "numberOfArticulations", "muscleStrength"]
 
-PARAM_MIN_MAX = [[10,121], [1,16],[10,100], [5,60],[2,32],[1,7],[200,6400]]
+PARAM_MIN_MAX = [[10,121], [1,16],[10,100], [5,60],[2,32],[1,7],[200,4000]]
 
 ADN_LENGTH = 32
 
@@ -229,7 +229,7 @@ class Dna():
 
         divisionFactor={"bodySize": 4, "nbrOfArms": 0.5, "lengthBones": 7,
                          "widthBones": 2 , "radiusArticulations": 1.5,
-                         "numberOfArticulations": 0.5, "muscleStrength": 300}
+                         "numberOfArticulations": 0.5, "muscleStrength": 250}
         self.geneString=""
         i=0
 
@@ -264,7 +264,7 @@ class Dna():
         
         """
 
-        multiplicationFactor= [ 4,  0.5,  7, 2 ,  1.5, 0.5, 300]
+        multiplicationFactor= [ 4,  0.5,  7, 2 ,  1.5, 0.5, 250]
 
         self.geneList = self.geneSeparation()
 
