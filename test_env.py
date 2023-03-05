@@ -46,9 +46,22 @@ def start(space):
     franken2body = Individual(franken2)
     franken2body.createBody(space,400,400,4)
 
-def reset(space):
-    space = pymunk.Space()
-    space.gravity = (0,981)
+def verifyStringDna(stringDna):
+
+    if len(stringDna) != 32 : #ici on pourra lier avec genetique.LengthDNA
+        print("String ADN de taille invalide")
+        raise ValueError
+
+    elif not all(letter in "01" for letter in stringDna):
+        print("L'ADN de notre créature n'accepte que des 0 et des 1")
+        raise IndexError
+    
+
+def insertCreature(stringDna, currentGen):
+
+    verifyStringDna(stringDna)
+    newMember = Individual(stringDna)
+    currentGen.add_individual(newMember)
     
   
 
@@ -64,7 +77,12 @@ def run(window, width, height):
 
 
 
-    resetButton = ui.ToggleButton("Start", "Reset", (860,650),(100,50), window, lambda:start(), lambda:reset())
+    stringDna = "00111000101010101000110101010011"
+    currentGen = Generation(0,10,space)
+
+    print(currentGen)
+    insertCreature(stringDna,currentGen)
+    print (currentGen)
 
 
 
@@ -86,6 +104,10 @@ def run(window, width, height):
 
 if __name__ == "__main__":
     run(window, WIDTH, HEIGHT)
+
+
+stringDna = "00111000101010101000110101010011"
+currentGen = Generation(0,10,space)
 
 
 
