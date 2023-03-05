@@ -56,6 +56,28 @@ class ToggleButton(Button):
         else:
             self.toggled = False
             self.func2()
+            
+
+class cycleButton(Button):
+    def __init__(self, text, pos, size, surface, funcList=[]) -> None:
+        super().__init__(text, pos, size, surface, funcList)
+        self.state = 0
+        
+    def addFunc(self, func):
+        self.func.append(func)
+    
+    def draw(self):
+        pg.draw.rect(self.surface,self.sidesCol, self.sides,border_radius = 12)
+        pg.draw.rect(self.surface,self.topCol, self.topRect,border_radius = 12)
+        textRect = self.text.get_rect(center=self.topRect.center)
+        self.surface.blit(self.text, textRect)
+        
+    def onClick(self):
+        if not self.func:
+            return
+        self.func[self.state]()
+        self.state = (self.state + 1) % len(self.func)
+    
 
 
 class DistanceCounter():

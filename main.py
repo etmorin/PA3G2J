@@ -48,6 +48,8 @@ class App:
         counter = ui.GenCounter(self.window)
         counter.next()
         self.uiElements["genCounter"] = counter
+        self.uiElements["obstacleToggle"].addFunc(lambda: self.env.createObstacles())
+        self.uiElements["obstacleToggle"].addFunc(lambda: self.env.resetObstacles())
 
 
 
@@ -109,6 +111,9 @@ class App:
         self.uiElements["startButton"] = startButton
         distanceCounter = ui.DistanceCounter(self.window)
         self.uiElements["distanceCounter"] = distanceCounter
+        obstacleToggle = ui.cycleButton("Changer les obstacles", (self.WIDTH/2-190,400),(380,50), self.window, [])
+        self.uiElements["obstacleToggle"] = obstacleToggle
+        self.interactables["obstacleToggle"] = obstacleToggle
 
     
     def eventHandler(self, events):
