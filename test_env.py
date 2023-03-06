@@ -77,14 +77,11 @@ def run(window, width, height):
 
 
 
-    stringDna = "00111000101010101000110101010011"
+
     currentGen = Generation(0,10,space)
 
-    print(currentGen)
-    insertCreature(stringDna,currentGen)
-    print (currentGen)
-
-
+   
+    
 
     create_boundaries(space, width, height)
     
@@ -106,8 +103,7 @@ if __name__ == "__main__":
     run(window, WIDTH, HEIGHT)
 
 
-stringDna = "00111000101010101000110101010011"
-currentGen = Generation(0,10,space)
+
 
 
 

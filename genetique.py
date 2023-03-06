@@ -5,9 +5,9 @@ import time
 
 PARAMETERS = ["bodySize", "nbrOfArms", "lengthBones",
                        "widthBones", "radiusArticulations",
-                       "numberOfArticulations", "muscleStrength"]
+                       "numberOfArticulations", "muscleStrength","asymetry"]
 
-PARAM_MIN_MAX = [[10,121], [1,16],[10,100], [5,60],[2,32],[1,7],[200,4000]]
+PARAM_MIN_MAX = [[10,121], [1,16],[10,100], [5,60],[2,32],[1,7],[200,4000],[0,15]]
 
 ADN_LENGTH = 32
 
@@ -167,13 +167,16 @@ class Individual():
         """
 
         dictionnary = self.dna.dnaToParam(PARAMETERS)
+        print(dictionnary)
         paramValues = list(dictionnary.values())
         paramValues = map(int,paramValues)
-        bodySize,nbrOfArm,lengthBones,widthBones,radiusArticulations,numberOfArticulations,muscleStrength = paramValues
+        
+        bodySize,nbrOfArm,lengthBones,widthBones,radiusArticulations,numberOfArticulations,muscleStrength,asymetry = paramValues
+        print (paramValues)
         creature = Creature(space, posX, posY,
                             bodySize,nbrOfArm,lengthBones,widthBones,
                             radiusArticulations,numberOfArticulations,
-                            muscleStrength,maskCategory )
+                            muscleStrength,maskCategory ,asymetry)
         self.bodyInSpace = creature
         self.positionTracker.setObjectToFollow(self.bodyInSpace.getCenterShape())
         return self.bodyInSpace
@@ -229,7 +232,8 @@ class Dna():
 
         divisionFactor={"bodySize": 4, "nbrOfArms": 0.5, "lengthBones": 7,
                          "widthBones": 2 , "radiusArticulations": 1.5,
-                         "numberOfArticulations": 0.5, "muscleStrength": 250}
+                         "numberOfArticulations": 0.5, "muscleStrength": 350, 
+                         "asymetry": 1}
         self.geneString=""
         i=0
 
@@ -250,7 +254,8 @@ class Dna():
             list1 = list1[::-1]# on remet à l'endroit et on sauvegarde
             string = "".join(list1)
             self.geneString += string
-
+        
+        print(self.geneString)
         return self.geneString
     
     def dnaToParam(self,parameters):
@@ -264,18 +269,22 @@ class Dna():
         
         """
 
-        multiplicationFactor= [ 4,  0.5,  7, 2 ,  1.5, 0.5, 250]
+        multiplicationFactor= [ 4,  0.5,  7, 2 ,  1.5, 0.5, 350, 1]
 
         self.geneList = self.geneSeparation()
+        print(self.geneList)
 
         tempList = []
-        for i in range (len(self.geneList)-1): # -1 car encore 4bit nons utilisés
+        for i in range (len(self.geneList)): 
+
             temp = int(self.geneList[i],2)
+            temp = temp*multiplicationFactor[i]
             temp = self.paramSizeControl(temp,i)
 
-            tempList.append(temp*multiplicationFactor[i])
+            tempList.append(temp)
 
         dictionnary = dict(zip(parameters,tempList))
+        print(dictionnary)
         return dictionnary
 
     def paramSizeControl(self,temp,i):
@@ -433,7 +442,7 @@ for i in range(100):
 
 creatureParameters = {"bodySize" : 30 , "nbrOfArms": 1, "lengthBones": 100,
                        "widthBones" : 10, "radiusArticulations":5,
-                       "numberOfArticulations": 2, "muscleStrength": 1500}
+                       "numberOfArticulations": 2, "muscleStrength": 1500, "asymetry" : 6}
 """
 
 """
@@ -449,38 +458,6 @@ for i in range(100):
     currentGen = previousGen.createNextGeneration(5)
     print(currentGen)
     previousGen = currentGen"""
-
-class Handler():
-
-    def __init__(self, firstGeneration, repetitions, wantedLapse):
-
-        self.currentGen = firstGeneration
-        self.repetitions = repetitions
-        self.genSize = firstGeneration.get_generationSize()
-        self.wantedLapse = wantedLapse
-
-    def handling(self):
-
-        self.startTime = time.perf_counter()
-        self.currentTime = time.perf_counter()
-
-        while self.currentTime - self.startTime < self.wantedLapse :
-            
-            for individual in self.currentGen.individualsList:
-                
-                todo = "draw et faire la course"
-
-            self.currentTime = time.perf_counter()
-        
-        print(self.currentGen)
-        self.currentGen = self.currentGen.createNextGeneration(self.genSize)
-        
-
-
-    def start(self):
-
-        for i in range (self.repetitions):
-            self.handling()
 
 """firstGen = Generation(0,5)
 run = Handler(firstGen, 100, 5)
