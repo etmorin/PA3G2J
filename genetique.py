@@ -7,7 +7,7 @@ PARAMETERS = ["bodySize", "nbrOfArms", "lengthBones",
                        "widthBones", "radiusArticulations",
                        "numberOfArticulations", "muscleStrength","asymetry"]
 
-PARAM_MIN_MAX = [[10,121], [1,16],[10,100], [5,60],[2,32],[1,7],[200,4000],[0,15]]
+PARAM_MIN_MAX = [[10,121], [1,8],[10,100], [5,60],[2,32],[1,7],[200,5000],[1,15]]
 
 ADN_LENGTH = 32
 
@@ -253,7 +253,7 @@ class Dna():
             string = "".join(list1)
             self.geneString += string
         
-        print(self.geneString)
+
         return self.geneString
     
     def dnaToParam(self,parameters):
@@ -270,7 +270,7 @@ class Dna():
         multiplicationFactor= [ 4,  0.5,  7, 2 ,  1.5, 0.5, 350, 1]
 
         self.geneList = self.geneSeparation()
-        print(self.geneList)
+  
 
         tempList = []
         for i in range (len(self.geneList)): 
