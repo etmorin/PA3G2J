@@ -167,12 +167,10 @@ class Individual():
         """
 
         dictionnary = self.dna.dnaToParam(PARAMETERS)
-        print(dictionnary)
         paramValues = list(dictionnary.values())
         paramValues = map(int,paramValues)
         
         bodySize,nbrOfArm,lengthBones,widthBones,radiusArticulations,numberOfArticulations,muscleStrength,asymetry = paramValues
-        print (paramValues)
         creature = Creature(space, posX, posY,
                             bodySize,nbrOfArm,lengthBones,widthBones,
                             radiusArticulations,numberOfArticulations,
@@ -284,7 +282,6 @@ class Dna():
             tempList.append(temp)
 
         dictionnary = dict(zip(parameters,tempList))
-        print(dictionnary)
         return dictionnary
 
     def paramSizeControl(self,temp,i):
