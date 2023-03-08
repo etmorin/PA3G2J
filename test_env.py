@@ -78,7 +78,9 @@ def run(window, width, height):
 
 
 
-    currentGen = Generation(0,10,space)
+    femaleDnaString = "11111111111111111111111111111111"
+    femaleIndividual = Individual(femaleDnaString)
+    femaleIndividual.createBody(space, 400,400,1)
 
    
     

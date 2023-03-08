@@ -31,6 +31,9 @@ ADN_LENGTH = 32
     taille articulation: 1 -> 32 , par pas de 2
     puissance muscle: 200 -> 3200 , par pas de 200
     vecteur changement taille des membres: 1 -> 16 , par pas de 1
+    asymetry: 0,1 : taille des os égales au sein du meme bras /
+      2,3 : taille des membres égales
+
 
 """
 
