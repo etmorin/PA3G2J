@@ -76,13 +76,6 @@ def run(window, width, height):
     space.gravity = (0,981)
 
 
-
-
-    femaleDnaString = "11111111111111111111111111111111"
-    femaleIndividual = Individual(femaleDnaString)
-    femaleIndividual.createBody(space, 400,400,1)
-
-   
     
 
     create_boundaries(space, width, height)

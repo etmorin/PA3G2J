@@ -36,6 +36,8 @@ class BodyPart:
     
     def get_posY(self):
         return self.posY
+    
+
 
  
 class Bone(BodyPart):
@@ -98,6 +100,7 @@ class Arm(BodyPart):
         return length, width, articulationSize
     
 
+
 class ArmRight(Arm):
 
     def __init__(self,space, posX, posY, length, width, articulationSize, numberOfArticulations, muscleStrength,category,factor):
@@ -151,7 +154,7 @@ class Creature():
         body  = self.torso.get_body()
         shape = self.torso.get_shape()
         factorBones, factorArms = self.asymetryFactory(asymetry)
-        print(factorBones)
+        print(factorBones,factorArms)
         sizesList =[]
 
 
@@ -160,46 +163,34 @@ class Creature():
             cercleX = posX + bodySize*math.cos(i*2*math.pi/(nbrOfArms))
             cercleY = posY + bodySize*math.sin(i*2*math.pi/(nbrOfArms))
 
-            """            if  reductionFactor !=1:
-                sizesList.append((lengthBones,widthBones,radiusArticulations))
-                
-                if i < nbrOfArms/2:
-                    temp1 = int(lengthBones*reductionFactor)
-                    temp2 = int(widthBones*reductionFactor)
-                    temp3 = int(radiusArticulations*reductionFactor)
-                    if temp1 > 10 and temp2 > 5 and temp3 >2:
-                        lengthBones = temp1
-                        widthBones = temp2
-                        radiusArticulations =temp3
-
-                
-                else :
-                    lengthBones=sizesList[nbrOfArms-i][0]
-                    widthBones = sizesList[nbrOfArms-i][1]
-                    radiusArticulations = sizesList[nbrOfArms-i][2]"""
-                    
-                      
-            
             if cercleX<posX:   #bras gauche
                 arm = ArmLeft(space, cercleX-(lengthBones/2), cercleY, lengthBones, widthBones, radiusArticulations,numberOfArticulations, muscleStrength,category,factorBones)
-                print(i, "gauche")
-
             else:              #bras droit
                 arm = ArmRight(space, cercleX+(lengthBones/2), cercleY, lengthBones, widthBones, radiusArticulations,numberOfArticulations, muscleStrength,category,factorBones)
-                print(i, "left")
+
             joint = pymunk.PivotJoint(arm.bone1.get_body(),body,(cercleX,cercleY))
             spring = pymunk.DampedSpring(arm.bone1.get_body(), body, (0,0), (0,0), 0, muscleStrength, 100)
             space.add(joint,spring)
+
+            if i < (nbrOfArms/2):
+                sizesList.insert(0,(lengthBones,widthBones,radiusArticulations))
+                if i != 0:
+                    temp1 = factorArms*lengthBones
+                    temp2 = factorArms*widthBones
+                    temp3 = factorArms*widthBones
+                    if temp1 > 30  and temp2 > 10 and temp3 > 4:
+                        lengthBones,widthBones,radiusArticulations = int(temp1), int(temp2), int(temp3)
+            else:
+                lengthBones,widthBones,radiusArticulations = sizesList.pop()
+            
+            print(sizesList)
         space.add(body,shape)
 
-  #  def sizeRefactoring(self,i,length,width,articulationSize, nbrOfArms):
 
         
 
 
     def asymetryFactory(self, asymetryFactor):
-
-    
         if asymetryFactor < 8  and asymetryFactor%2 == 0:
             factorbones =  1
             factorarms = 1
@@ -211,8 +202,7 @@ class Creature():
             factorarms = 1
         elif asymetryFactor >= 8 and asymetryFactor%2 != 0:
             factorbones = 0.95
-            factorarms = 0.95
-
+            factorarms = 0.75
         return factorbones, factorarms
 
 
