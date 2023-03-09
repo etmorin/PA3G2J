@@ -150,8 +150,6 @@ class GenCounter():
 
 
 """
-Ceci n'est pas mon code 
-!
 class TextField:
     def init(self, window, position=(0,0),dimension=(300,50),maximum=100):
         self.postion = position
