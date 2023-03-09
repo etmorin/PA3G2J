@@ -76,7 +76,8 @@ def run(window, width, height):
     space.gravity = (0,981)
 
 
-    
+    testind= Individual("10001000111111111111111111111111")
+    testind.createBody(space, 400,400,1)
 
     create_boundaries(space, width, height)
     

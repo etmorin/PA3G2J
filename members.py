@@ -50,6 +50,13 @@ class Bone(BodyPart):
         self.shape.elasticity = 0.7
         self.shape.friction   = 1 #pour ne pas glisser sur le sol
         self.shape.filter = pymunk.ShapeFilter(categories=category,mask=category)
+    
+    def get_length(self):
+        return self.length
+    
+    def get_width(self):
+        return self.width
+
 
     
 
@@ -63,6 +70,10 @@ class Articulation(BodyPart):
         self.shape.elasticity = 0.7
         self.shape.friction   = 1 #pour ne pas glisser sur le sol
         self.shape.filter = pymunk.ShapeFilter(categories=category,mask=category)
+        self.radius = length
+
+    def get_radius(self):
+        return self.radius
 
 class Torso(BodyPart):
 
@@ -86,7 +97,9 @@ class Arm(BodyPart):
         self.muscleStrength = muscleStrength
         self.bone1 = Bone(posX, posY, length, width, category)
         space.add(self.bone1.get_body(),self.bone1.get_shape())
-        self.previousbone = self.bone1.get_body()
+        self.previousBone = self.bone1
+        self.previousboneBody = self.previousBone.get_body()
+        self.previousArticulationSize = articulationSize
         
 
     def sizeRefactoring(self,length,width,articulationSize,factor):
@@ -94,7 +107,7 @@ class Arm(BodyPart):
         temp1 = factor*length
         temp2 = factor*width
         temp3 = factor*articulationSize
-        if temp1 > 30  and temp2 > 10 and temp3 > 4:
+        if temp1 > 30  and temp2 > 10 and temp3 > 5:
             length,width,articulationSize = int(temp1), int(temp2), int(temp3)
 
         return length, width, articulationSize
@@ -111,15 +124,17 @@ class ArmRight(Arm):
 
     def add_articulation(self,i,posX, posY, length, width, articulationSize, category):
 
-        bone = Bone((posX+(length+(articulationSize*2))*i),posY,length,width, category)
-        articulation = Articulation(posX+(length + 2*articulationSize)*(i-1) +length/2+articulationSize, posY, articulationSize, 0, category)
+        bone = Bone(self.previousBone.get_posX()+ self.previousBone.get_length()+2*self.previousArticulationSize,posY,length,width, category)
+        articulation = Articulation(self.previousBone.get_posX()+self.previousBone.get_length()/2+articulationSize, posY, articulationSize, 0, category)
+        self.previousArticulationSize = articulation.get_radius()
         self.space.add(bone.get_body(),bone.get_shape())
         self.space.add(articulation.get_body(),articulation.get_shape())
-        joint1 =  pymunk.PivotJoint(self.previousbone,articulation.get_body(),(posX + (i-1)*(length+2*articulationSize)+length/2,posY))
-        joint2 =  pymunk.PivotJoint(bone.get_body(),articulation.get_body(),(posX+(i-1)*(length+2*articulationSize)+ length/2+articulationSize*2,posY))
-        spring = pymunk.DampedSpring(bone.get_body(), self.previousbone, (0,0), (0,0), 0, self.muscleStrength, 100)
+        joint1 =  pymunk.PivotJoint(self.previousboneBody,articulation.get_body(),(self.previousBone.get_posX()+self.previousBone.get_length()/2,posY))
+        joint2 =  pymunk.PivotJoint(bone.get_body(),articulation.get_body(),(bone.get_posX()-length/2,posY))
+        spring = pymunk.DampedSpring(bone.get_body(), self.previousboneBody, (0,0), (0,0), 0, self.muscleStrength, 100)
         self.space.add(joint1,joint2,spring)
-        self.previousbone = bone.get_body()
+        self.previousBone = bone
+        self.previousboneBody = bone.get_body()
  
 
     
@@ -132,15 +147,17 @@ class ArmLeft(Arm):
             length,width,articulationSize = self.sizeRefactoring(length,width,articulationSize,factor)
 
     def add_articulation(self,i,posX, posY, length, width, articulationSize, category):
-        bone = Bone((posX-(length+(articulationSize*2))*i),posY,length,width, category)
-        articulation = Articulation(posX-(length + 2*articulationSize)*(i-1) -length/2-articulationSize, posY, articulationSize, 0, category)
+        bone = Bone(self.previousBone.get_posX() - self.previousBone.get_length()-2*self.previousArticulationSize,posY,length,width, category)
+        articulation = Articulation(self.previousBone.get_posX()-self.previousBone.get_length()/2-articulationSize, posY, articulationSize, 0, category)
+        self.previousArticulationSize = articulation.get_radius()
         self.space.add(bone.get_body(),bone.get_shape())
         self.space.add(articulation.get_body(),articulation.get_shape())
-        joint1 =  pymunk.PivotJoint(self.previousbone,articulation.get_body(),(posX -(i-1)*(length+2*articulationSize)-length/2,posY))
-        joint2 =  pymunk.PivotJoint(bone.get_body(),articulation.get_body(),(posX-(i-1)*(length+2*articulationSize)- length/2-articulationSize*2,posY))
-        spring = pymunk.DampedSpring(bone.get_body(), self.previousbone, (0,0), (0,0), 0, self.muscleStrength, 100)
+        joint1 =  pymunk.PivotJoint(self.previousboneBody,articulation.get_body(),(self.previousBone.get_posX()-self.previousBone.get_length()/2,posY))
+        joint2 =  pymunk.PivotJoint(bone.get_body(),articulation.get_body(),(bone.get_posX()+length/2,posY))
+        spring = pymunk.DampedSpring(bone.get_body(), self.previousboneBody, (0,0), (0,0), 0, self.muscleStrength, 100)
         self.space.add(joint1,joint2,spring)
-        self.previousbone = bone.get_body()
+        self.previousboneBody = bone.get_body()
+        self.previousBone = bone
 
 
 class Creature():
@@ -178,7 +195,7 @@ class Creature():
                     temp1 = factorArms*lengthBones
                     temp2 = factorArms*widthBones
                     temp3 = factorArms*widthBones
-                    if temp1 > 30  and temp2 > 10 and temp3 > 4:
+                    if temp1 > 30  and temp2 > 10 and temp3 > 5:
                         lengthBones,widthBones,radiusArticulations = int(temp1), int(temp2), int(temp3)
             else:
                 lengthBones,widthBones,radiusArticulations = sizesList.pop()
