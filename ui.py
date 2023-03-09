@@ -147,22 +147,60 @@ class GenCounter():
         textRect = self.text.get_rect(topleft=pg.Vector2(topleft[0] + 5, topleft[1] + 40))
         self.surface.blit(self.text, textRect)
 
+
+
 """
-class gen_modifier():
-    def __init__(self, surface):
-        self.surface = surface
-        self.temps = None
-        self.style = pg.font.SysFont("Arial", 28)
-    
-    def timeGen():
-        Menu pour gérer le temps d'une generation
-    
-        sliderTime = plt.axes([0.2 0.45, 0.7, 0.05])
+Ceci n'est pas mon code 
+!
+class TextField:
+    def init(self, window, position=(0,0),dimension=(300,50),maximum=100):
+        self.postion = position
+        self.dimension = dimension
+        self.window = window
+        self.text = "None"
+        self.active = False
+        self.maxC = maximum
+        self.alphabet = string.ascii_letters + string.digits + string.punctuation + " "
 
-    def numberGen():
-        Menu pour gérer le nombre de generation
-        pass
+    def draw(self):
+        self.drawBG()
+        self.drawText()
 
-    def sizeGen():
-        Menu pour gérer la taille d'une generation
-        pass"""
+    def drawBG(self):
+        colorBg = (0,0,0) #black
+        colorOutline = (0,205,0) if self.active else (205,0,0) #green or red
+        pygame.draw.rect(self.window,colorBg,[self.postion,self.dimension])
+        pygame.draw.rect(self.window,colorOutline,[self.postion,self.dimension],3)
+
+    def drawText(self):
+        font = pygame.font.Font(None,50)
+        text = font.render(self.text, True, "white")
+        self.window.blit(text,(self.postion[0]+10,self.postion[1]+10))
+
+    def contains(self,pos):
+        if pos[0] >= self.postion[0] and pos[0] <= self.postion[0] + self.dimension[0]:
+            if pos[1] >= self.postion[1] and pos[1] <= self.postion[1] + self.dimension[1]:
+                return True
+        return False
+
+    def update(self,event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.contains(pygame.mouse.get_pos()):
+                self.active()
+        if event.type == pygame.KEYDOWN and self.active :
+            if event.key == K_BACKSPACE: #to supprime
+                self.text = self.text[:-1]
+            else: #to add
+                c = event.unicode
+                if c in self.alphabet and len(self.text) < self.maxC:
+                    self.text += c
+        self.draw()
+
+    def active(self):
+        self.active = not self.active
+
+    def getText(self):
+        return self.text
+
+    def seText(self,newText):
+        self.__text = newText"""
