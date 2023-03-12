@@ -30,7 +30,7 @@ class App:
         self.genTime = 10
         self.currentGen = 0
         self.genHistory = []
-        self.maxGen = 100
+        self.maxGen = 9999
         self.population = None
         self.startTime = None
         self.currentTime = None
@@ -93,7 +93,6 @@ class App:
                 genScore = self.genHistory[i].findBestIndividual(1)[0].get_bestScore()
                 multigenBestScore = genScore if genScore > multigenBestScore else multigenBestScore
             if self.population.findBestIndividual(1)[0].get_bestScore() < multigenBestScore:
-                print("ROLLBACK")
                 parents = self.genHistory[-5].findBestIndividual(2)      
         self.genHistory.append(self.population)
         if not parents:

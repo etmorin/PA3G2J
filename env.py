@@ -67,7 +67,10 @@ class Env:
         self.floor = self.createFloor()
  
     def reset(self):
+        incline = self.floorIncline
         self.__init__(self.window)
+        self.floorIncline = incline
+        self.resetFloor()
     
     def step(self,dt):
         self.space.step(dt)
