@@ -29,7 +29,7 @@ class Camera:
                 continue
             text = pg.font.SysFont("Arial", 30).render(str(value),1,pg.Color(0,0,0))
             posx, posy = graduation.body.position
-            textRect = text.get_rect(center=(posx + self.offset.x, posy + 375 - self.offset.y))
+            textRect = text.get_rect(center=(posx + self.offset.x, -posy + 400 - self.offset.y))
             self.drawOptions.surface.blit(text, textRect)
         
     def update(self):

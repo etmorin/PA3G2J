@@ -7,6 +7,7 @@ class Button:
         self.func = func
         self.pos = pos
         self.surface = surface
+        self.locked = False
 
         self.text = pg.font.SysFont("Arial", 38).render(text,1,pg.Color(236,240,241))
 
@@ -22,9 +23,17 @@ class Button:
         pg.draw.rect(self.surface,self.topCol, self.topRect,border_radius = 12)
         textRect = self.text.get_rect(center=self.topRect.center)
         self.surface.blit(self.text, textRect)
+        
+    def lock(self):
+        self.locked = True
+        
+    def unlock(self):
+        self.locked = False
 
 
     def checkClick(self):
+        if self.locked:
+            return
         mousePos = pg.mouse.get_pos()
         if self.topRect.collidepoint(mousePos):
                 self.onClick()
@@ -59,16 +68,21 @@ class ToggleButton(Button):
             
 
 class cycleButton(Button):
-    def __init__(self, text, pos, size, surface, funcList=[]) -> None:
-        super().__init__(text, pos, size, surface, funcList)
+    def __init__(self, baseText, pos, size, surface, funcList=[], textList=[]) -> None:
+        super().__init__(baseText, pos, size, surface, funcList)
+        self.textList = textList
+        self.textList.append(baseText)
+        self.func.append(lambda: True)
         self.state = 0
         
-    def addFunc(self, func):
+    def addFunc(self, func, text):
         self.func.append(func)
+        self.textList.append(text)
     
     def draw(self):
         pg.draw.rect(self.surface,self.sidesCol, self.sides,border_radius = 12)
         pg.draw.rect(self.surface,self.topCol, self.topRect,border_radius = 12)
+        self.text = pg.font.SysFont("Arial", 38).render(self.textList[self.state],1,pg.Color(236,240,241))
         textRect = self.text.get_rect(center=self.topRect.center)
         self.surface.blit(self.text, textRect)
         
@@ -76,7 +90,8 @@ class cycleButton(Button):
         if not self.func:
             return
         self.func[self.state]()
-        self.state = (self.state + 1) % len(self.func)
+        self.state = (self.state + 1) % len(self.textList)
+        if(self.state == 0): self.state = 1
     
 
 

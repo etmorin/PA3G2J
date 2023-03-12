@@ -48,8 +48,8 @@ class App:
         counter = ui.GenCounter(self.window)
         counter.next()
         self.uiElements["genCounter"] = counter
-        self.uiElements["obstacleToggle"].addFunc(lambda: self.env.createObstacles())
-        self.uiElements["obstacleToggle"].addFunc(lambda: self.env.resetObstacles())
+        self.uiElements["obstacleToggle"].lock()
+        
 
 
 
@@ -100,6 +100,7 @@ class App:
         del self.uiElements["timer"]
         self.uiElements["distanceCounter"].reset()
         self.uiElements["genCounter"].reset()
+        self.uiElements["obstacleToggle"].unlock()
         self.population = None
         self.currentGen = 0
         self.env.reset()
@@ -111,7 +112,11 @@ class App:
         self.uiElements["startButton"] = startButton
         distanceCounter = ui.DistanceCounter(self.window)
         self.uiElements["distanceCounter"] = distanceCounter
-        obstacleToggle = ui.cycleButton("Changer les obstacles", (self.WIDTH/2-190,400),(380,50), self.window, [])
+        obstacleToggle = ui.cycleButton("Changer les obstacles", (self.WIDTH/2-190,400),(380,50), self.window)
+        obstacleToggle.addFunc(lambda:self.env.createObstacleSet("hedges"), "Aucun")
+        obstacleToggle.addFunc(lambda:self.env.createObstacleSet("incline") , "100m haies")
+        obstacleToggle.addFunc(lambda:self.env.resetObstacles(), "pente")
+        
         self.uiElements["obstacleToggle"] = obstacleToggle
         self.interactables["obstacleToggle"] = obstacleToggle
 
