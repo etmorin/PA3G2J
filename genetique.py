@@ -375,7 +375,7 @@ class Generation():
         
         return bestIndividuals
     
-    def createNextGeneration(self, sizeOfGeneration):
+    def createNextGeneration(self, sizeOfGeneration, parents):
         """
         Créé une génération de taille n = int en prenant comme parent les deux individus les plus forts de cette génération.
             Args:
@@ -384,8 +384,9 @@ class Generation():
                 newGen : un objet de type génération contenant sizeOfGeneration individus
         
         """
+        
 
-        bestIndividuals = self.findBestIndividual(2)
+        bestIndividuals = parents
         newGen  = Generation(self.generationDepth+1,sizeOfGeneration, self.space)
         
         for i in range (sizeOfGeneration):

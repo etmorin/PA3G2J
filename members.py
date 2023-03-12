@@ -171,7 +171,7 @@ class Creature():
         body  = self.torso.get_body()
         shape = self.torso.get_shape()
         factorBones, factorArms = self.asymetryFactory(asymetry)
-        print(factorBones,factorArms)
+        #print(factorBones,factorArms)
         sizesList =[]
 
 
@@ -200,7 +200,7 @@ class Creature():
             else:
                 lengthBones,widthBones,radiusArticulations = sizesList.pop()
             
-            print(sizesList)
+            #print(sizesList)
         space.add(body,shape)
 
 

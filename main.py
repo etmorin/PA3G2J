@@ -29,6 +29,7 @@ class App:
         self.genSize = 10
         self.genTime = 10
         self.currentGen = 0
+        self.genHistory = []
         self.maxGen = 100
         self.population = None
         self.startTime = None
@@ -85,10 +86,22 @@ class App:
         
     
     def startNextGen(self):
+        parents = None
+        if self.currentGen > 5:
+            multigenBestScore = 0
+            for  i in range(-1,-6,-1):
+                genScore = self.genHistory[i].findBestIndividual(1)[0].get_bestScore()
+                multigenBestScore = genScore if genScore > multigenBestScore else multigenBestScore
+            if self.population.findBestIndividual(1)[0].get_bestScore() < multigenBestScore:
+                print("ROLLBACK")
+                parents = self.genHistory[-5].findBestIndividual(2)      
+        self.genHistory.append(self.population)
+        if not parents:
+            parents = self.population.findBestIndividual(2)
+        newPopulation = self.population.createNextGeneration(self.genSize, parents)
+        self.population = newPopulation
         self.currentGen += 1
         self.uiElements["genCounter"].next()
-        newPopulation = self.population.createNextGeneration(self.genSize)
-        self.population = newPopulation
         self.env.reset()
         i = 0
         for individual in self.population.get_individualList():
