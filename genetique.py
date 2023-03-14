@@ -1,7 +1,6 @@
 import random
 from members import *
 from positionTracker import *
-import time
 
 PARAMETERS = ["bodySize", "nbrOfArms", "lengthBones",
                        "widthBones", "radiusArticulations",

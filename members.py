@@ -41,6 +41,18 @@ class BodyPart:
 
  
 class Bone(BodyPart):
+    """
+    Une classe qui représente un os
+    Attributs:  posX : position sur l'axe X
+                posY : position sur l'axe Y
+                length : longueur de l'os
+                width : largeur de l'os
+                category: masque des collisions
+                
+
+    Methodes:   get_length
+                get_width
+    """
 
     def __init__(self, posX, posY, length, width, category):
         super().__init__(  posX, posY, length, width,category)
@@ -61,6 +73,18 @@ class Bone(BodyPart):
     
 
 class Articulation(BodyPart):
+    """
+    Une classe qui réprésente une articulation
+        Attributs:  posX : position sur l'axe X
+                    posY : position sur l'axe Y
+                    length : rayon de l'articulation (cercle)
+                    width : inutile
+                    category: masque des collisions
+                
+
+        Methodes:   get_radius
+                    
+    """
 
     def __init__(self,  posX, posY, length, width, category):
         super().__init__(  posX, posY, length, width, category)
@@ -76,6 +100,18 @@ class Articulation(BodyPart):
         return self.radius
 
 class Torso(BodyPart):
+    """
+    Une classe qui réprésente un torse
+        Attributs:  posX : position sur l'axe X
+                    posY : position sur l'axe Y
+                    length : rayon du corps (cercle)
+                    width : inutile
+                    category: masque des collisions
+                
+
+        Methodes:   get_radius
+                    
+    """
 
     def __init__(self, posX, posY, length, width, category):
         super().__init__(posX, posY, length, width,category)
@@ -90,8 +126,32 @@ class Torso(BodyPart):
 
 
 class Arm(BodyPart):
+    """
+    Cette classe réprésente un bras, ce dernier étant composé d'os , d'articulations et de muscles
+    Les os sont des objets os
+    Les articulations sont des objets articulations
+    Ils sont reliés par des tendons qui sont des PivotJoints
+    Ils sont actionnés par des ressorts qui sont des Dampedsprings
 
-    def __init__(self,space, posX, posY, length, width, articulationSize, numberOfArticulations, muscleStrength,category,factor):
+        Attributs:  posX: centre du premier os du bras sur l'axe X
+                    posY: centre du premier os du bras sur l'axe Y
+                    length : longueur d'un os
+                    width : largeur d'un os
+                    articulationSize: rayon d'une articulation
+                    numberOfArticulations: le nombre d'articulations de chaque bras
+                    muscleStrength: la force d'un muscle dampedspring
+                    category: la catégorie pour masque collision
+                    factor: le facteur de changement de taille
+                    side: si le bras est gauche ou droite ("Right" ou "Left")
+        
+        Methodes:   sizeRefactoring:
+                        modifie la valeur des attributs en fonction du factor
+                    Add_articualtion:
+                        ajoute un set articulaiton_os_muscle au moignon déjà présent
+
+    """
+
+    def __init__(self,space, posX, posY, length, width, articulationSize, numberOfArticulations, muscleStrength, category, factor, side):
         super().__init__(posX, posY, length, width,category)
         self.space = space
         self.muscleStrength = muscleStrength
@@ -100,6 +160,10 @@ class Arm(BodyPart):
         self.previousBone = self.bone1
         self.previousboneBody = self.previousBone.get_body()
         self.previousArticulationSize = articulationSize
+
+        for i in range(1,numberOfArticulations+1):
+            self.add_articulation(i, posX, posY, length, width, articulationSize, category, side)
+            length,width,articulationSize = self.sizeRefactoring(length,width,articulationSize,factor)
         
 
     def sizeRefactoring(self,length,width,articulationSize,factor):
@@ -112,55 +176,40 @@ class Arm(BodyPart):
 
         return length, width, articulationSize
     
+    def add_articulation(self,i,posX, posY, length, width, articulationSize, category, side):
+
+        if side == "right":
+
+            bone = Bone(self.previousBone.get_posX()+ self.previousBone.get_length()+2*self.previousArticulationSize,posY,length,width, category)
+            articulation = Articulation(self.previousBone.get_posX()+self.previousBone.get_length()/2+articulationSize, posY, articulationSize, 0, category)
+            self.previousArticulationSize = articulation.get_radius()
+            joint1 =  pymunk.PivotJoint(self.previousboneBody,articulation.get_body(),(self.previousBone.get_posX()+self.previousBone.get_length()/2,posY))
+            joint2 =  pymunk.PivotJoint(bone.get_body(),articulation.get_body(),(bone.get_posX()-length/2,posY))
+            spring = pymunk.DampedSpring(bone.get_body(), self.previousboneBody, (0,0), (0,0), 0, self.muscleStrength, 100)
+
+        else:
+            bone = Bone(self.previousBone.get_posX() - self.previousBone.get_length()-2*self.previousArticulationSize,posY,length,width, category)
+            articulation = Articulation(self.previousBone.get_posX()-self.previousBone.get_length()/2-articulationSize, posY, articulationSize, 0, category)
+            self.previousArticulationSize = articulation.get_radius()
+            joint1 =  pymunk.PivotJoint(self.previousboneBody,articulation.get_body(),(self.previousBone.get_posX()-self.previousBone.get_length()/2,posY))
+            joint2 =  pymunk.PivotJoint(bone.get_body(),articulation.get_body(),(bone.get_posX()+length/2,posY))
+            spring = pymunk.DampedSpring(bone.get_body(), self.previousboneBody, (0,0), (0,0), 0, self.muscleStrength, 100)
 
 
-class ArmRight(Arm):
-
-    def __init__(self,space, posX, posY, length, width, articulationSize, numberOfArticulations, muscleStrength,category,factor):
-        super().__init__(space, posX, posY, length, width, articulationSize, numberOfArticulations, muscleStrength,category,factor)
-        for i in range(1,numberOfArticulations+1):
-            self.add_articulation(i, posX, posY, length, width, articulationSize, category)
-            length,width,articulationSize = self.sizeRefactoring(length,width,articulationSize,factor)
-
-    def add_articulation(self,i,posX, posY, length, width, articulationSize, category):
-
-        bone = Bone(self.previousBone.get_posX()+ self.previousBone.get_length()+2*self.previousArticulationSize,posY,length,width, category)
-        articulation = Articulation(self.previousBone.get_posX()+self.previousBone.get_length()/2+articulationSize, posY, articulationSize, 0, category)
-        self.previousArticulationSize = articulation.get_radius()
         self.space.add(bone.get_body(),bone.get_shape())
         self.space.add(articulation.get_body(),articulation.get_shape())
-        joint1 =  pymunk.PivotJoint(self.previousboneBody,articulation.get_body(),(self.previousBone.get_posX()+self.previousBone.get_length()/2,posY))
-        joint2 =  pymunk.PivotJoint(bone.get_body(),articulation.get_body(),(bone.get_posX()-length/2,posY))
-        spring = pymunk.DampedSpring(bone.get_body(), self.previousboneBody, (0,0), (0,0), 0, self.muscleStrength, 100)
         self.space.add(joint1,joint2,spring)
         self.previousBone = bone
         self.previousboneBody = bone.get_body()
- 
-
     
-class ArmLeft(Arm):
 
-    def __init__(self,space, posX, posY, length, width, articulationSize, numberOfArticulations, muscleStrength,category,factor):
-        super().__init__(space, posX, posY, length, width, articulationSize, numberOfArticulations, muscleStrength,category,factor)
-        for i in range(1,numberOfArticulations+1):
-            self.add_articulation(i, posX, posY, length, width, articulationSize, category)
-            length,width,articulationSize = self.sizeRefactoring(length,width,articulationSize,factor)
-
-    def add_articulation(self,i,posX, posY, length, width, articulationSize, category):
-        bone = Bone(self.previousBone.get_posX() - self.previousBone.get_length()-2*self.previousArticulationSize,posY,length,width, category)
-        articulation = Articulation(self.previousBone.get_posX()-self.previousBone.get_length()/2-articulationSize, posY, articulationSize, 0, category)
-        self.previousArticulationSize = articulation.get_radius()
-        self.space.add(bone.get_body(),bone.get_shape())
-        self.space.add(articulation.get_body(),articulation.get_shape())
-        joint1 =  pymunk.PivotJoint(self.previousboneBody,articulation.get_body(),(self.previousBone.get_posX()-self.previousBone.get_length()/2,posY))
-        joint2 =  pymunk.PivotJoint(bone.get_body(),articulation.get_body(),(bone.get_posX()+length/2,posY))
-        spring = pymunk.DampedSpring(bone.get_body(), self.previousboneBody, (0,0), (0,0), 0, self.muscleStrength, 100)
-        self.space.add(joint1,joint2,spring)
-        self.previousboneBody = bone.get_body()
-        self.previousBone = bone
 
 
 class Creature():
+    """
+    Cette classe représente une créature, elle est composée d'un corps et de bras.
+    
+    """
 
     def __init__(self, space, posX, posY, bodySize, nbrOfArms, lengthBones, widthBones, radiusArticulations,numberOfArticulations, muscleStrength,category,asymetry):
         
@@ -181,9 +230,9 @@ class Creature():
             cercleY = posY + bodySize*math.sin(i*2*math.pi/(nbrOfArms))
 
             if cercleX<posX:   #bras gauche
-                arm = ArmLeft(space, cercleX-(lengthBones/2), cercleY, lengthBones, widthBones, radiusArticulations,numberOfArticulations, muscleStrength,category,factorBones)
+                arm = Arm(space, cercleX-(lengthBones/2), cercleY, lengthBones, widthBones, radiusArticulations,numberOfArticulations, muscleStrength,category,factorBones,"left")
             else:              #bras droit
-                arm = ArmRight(space, cercleX+(lengthBones/2), cercleY, lengthBones, widthBones, radiusArticulations,numberOfArticulations, muscleStrength,category,factorBones)
+                arm = Arm(space, cercleX+(lengthBones/2), cercleY, lengthBones, widthBones, radiusArticulations,numberOfArticulations, muscleStrength,category,factorBones, "right")
 
             joint = pymunk.PivotJoint(arm.bone1.get_body(),body,(cercleX,cercleY))
             spring = pymunk.DampedSpring(arm.bone1.get_body(), body, (0,0), (0,0), 0, muscleStrength, 100)
@@ -203,9 +252,7 @@ class Creature():
         space.add(body,shape)
 
 
-        
-
-
+    
     def asymetryFactory(self, asymetryFactor):
         if asymetryFactor < 8  and asymetryFactor%2 == 0:
             factorbones =  1
