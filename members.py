@@ -24,6 +24,7 @@ class BodyPart:
         self.body.position = (posX, posY)
         self.category = category
 
+
        
     def get_shape(self):
         return self.shape
@@ -36,6 +37,8 @@ class BodyPart:
     
     def get_posY(self):
         return self.posY
+    
+    
     
 
 
@@ -58,7 +61,7 @@ class Bone(BodyPart):
         super().__init__(  posX, posY, length, width,category)
         self.shape       = pymunk.Poly.create_box(self.body,(length, width))
         self.shape.mass  = length*width/100 
-        self.shape.color = (0,0,0,100) #NOIR
+        self.shape.color = (0,0,0,255) #NOIR
         self.shape.elasticity = 0.7
         self.shape.friction   = 1 #pour ne pas glisser sur le sol
         self.shape.filter = pymunk.ShapeFilter(categories=category,mask=category)
@@ -68,6 +71,9 @@ class Bone(BodyPart):
     
     def get_width(self):
         return self.width
+
+    def set_transparancy(self, newTransparancy):
+        self.shape.color = (0,0,0,newTransparancy)
 
 
     
@@ -90,7 +96,7 @@ class Articulation(BodyPart):
         super().__init__(  posX, posY, length, width, category)
         self.shape       = pymunk.Circle(self.body, self.length) #ici length=radius
         self.shape.mass  = length*2
-        self.shape.color = (255,0,0,100)#ROUGE
+        self.shape.color = (255,0,0,50)#ROUGE
         self.shape.elasticity = 0.7
         self.shape.friction   = 1 #pour ne pas glisser sur le sol
         self.shape.filter = pymunk.ShapeFilter(categories=category,mask=category)
@@ -98,6 +104,9 @@ class Articulation(BodyPart):
 
     def get_radius(self):
         return self.radius
+    
+    def set_transparancy(self, newTransparancy):
+        self.shape.color = (250,0,0,newTransparancy)
 
 class Torso(BodyPart):
     """
@@ -121,9 +130,11 @@ class Torso(BodyPart):
     def round(self):
         self.shape = pymunk.Circle(self.body,self.length)
         self.shape.mass = self.length*2
-        self.shape.color = (0,255,0,100) #Vert
+        self.shape.color = (0,255,0,255) #Vert
         self.shape.filter = pymunk.ShapeFilter(categories=self.category,mask=self.category)
 
+    def set_transparancy(self, newTransparancy):
+        self.shape.color = (0,255,0,newTransparancy)
 
 class Arm(BodyPart):
     """
@@ -160,6 +171,9 @@ class Arm(BodyPart):
         self.previousBone = self.bone1
         self.previousboneBody = self.previousBone.get_body()
         self.previousArticulationSize = articulationSize
+        self.boneList = [ self.bone1]
+        self.articulationList = []
+        
 
         for i in range(1,numberOfArticulations+1):
             self.add_articulation(i, posX, posY, length, width, articulationSize, category, side)
@@ -201,6 +215,14 @@ class Arm(BodyPart):
         self.space.add(joint1,joint2,spring)
         self.previousBone = bone
         self.previousboneBody = bone.get_body()
+        self.boneList.append(bone)
+        self.articulationList.append(articulation)
+
+    def get_boneList(self):
+        return self.boneList
+    
+    def get_articulationList(self):
+        return self.articulationList
     
 
 
@@ -217,11 +239,13 @@ class Creature():
         self.parameters = [bodySize,nbrOfArms,lengthBones,widthBones,radiusArticulations,numberOfArticulations,muscleStrength,asymetry]
         self.torso = Torso(posX,posY,bodySize,width=0,category=category)
         self.torso.round()
-        body  = self.torso.get_body()
-        shape = self.torso.get_shape()
+        self.body  = self.torso.get_body()
+        self.bodyShape = self.torso.get_shape()
         factorBones, factorArms = self.asymetryFactory(asymetry)
-        
         sizesList =[]
+        self.boneList = []
+        self.articulationList = []
+        self.transparancy = False
 
 
         for i in range(nbrOfArms):
@@ -234,8 +258,8 @@ class Creature():
             else:              #bras droit
                 arm = Arm(space, cercleX+(lengthBones/2), cercleY, lengthBones, widthBones, radiusArticulations,numberOfArticulations, muscleStrength,category,factorBones, "right")
 
-            joint = pymunk.PivotJoint(arm.bone1.get_body(),body,(cercleX,cercleY))
-            spring = pymunk.DampedSpring(arm.bone1.get_body(), body, (0,0), (0,0), 0, muscleStrength, 100)
+            joint = pymunk.PivotJoint(arm.bone1.get_body(),self.body,(cercleX,cercleY))
+            spring = pymunk.DampedSpring(arm.bone1.get_body(), self.body, (0,0), (0,0), 0, muscleStrength, 100)
             space.add(joint,spring)
 
             if i < (nbrOfArms/2):
@@ -248,8 +272,12 @@ class Creature():
                         lengthBones,widthBones,radiusArticulations = int(temp1), int(temp2), int(temp3)
             else:
                 lengthBones,widthBones,radiusArticulations = sizesList.pop()
+            self.boneList.extend(arm.get_boneList())
+            self.articulationList.extend(arm.get_articulationList())
             
-        space.add(body,shape)
+        space.add(self.body,self.bodyShape)
+        print(self.boneList)
+        print(self.articulationList)
 
 
     
@@ -272,6 +300,16 @@ class Creature():
 
     def getCenterShape(self):
         return self.torso.get_shape()
+    
+    def switch_transparancy(self):
+        if not self.transparancy:
+            self.transparancy = True
+            self.torso.set_transparancy(50)
+            for bone in self.boneList:
+                bone.set_transparancy(50)
+            for articulation in self.articulationList:
+                articulation.set_transparancy(50)
+        
 
 
 

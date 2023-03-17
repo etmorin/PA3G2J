@@ -47,6 +47,7 @@ class Individual():
         self.positionTracker = PositionTracker()
         self.mutationRiskPerThousand = 10
         self.bestScore = 0
+        self.creature = None
 
         if type(dna) == str :
             self.dna = Dna(dna)
@@ -173,13 +174,16 @@ class Individual():
         paramValues = map(int,paramValues)
         
         bodySize,nbrOfArm,lengthBones,widthBones,radiusArticulations,numberOfArticulations,muscleStrength,asymetry = paramValues
-        creature = Creature(space, posX, posY,
+        self.creature = Creature(space, posX, posY,
                             bodySize,nbrOfArm,lengthBones,widthBones,
                             radiusArticulations,numberOfArticulations,
                             muscleStrength,maskCategory ,asymetry)
-        self.bodyInSpace = creature
+        self.bodyInSpace = self.creature
         self.positionTracker.setObjectToFollow(self.bodyInSpace.getCenterShape())
         return self.bodyInSpace
+    
+    def switchTransparancy(self):
+        self.creature.switch_transparancy()
 
 
 class Dna():

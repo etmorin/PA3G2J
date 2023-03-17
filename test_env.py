@@ -38,10 +38,9 @@ def start(space):
     frankenstein.createBody(space, 300,300,1)
 
     #autres gen:
-   
     frankensteinJunior = Individual("0100001001000010001000100010")
     frankensteinJunior.createBody(space, 300,300,2)
-
+    
     franken2 = Dna(string="0100001001000010001000100010")
     franken2body = Individual(franken2)
     franken2body.createBody(space,400,400,4)
@@ -77,7 +76,15 @@ def run(window, width, height):
 
 
     testind= Individual("10001000111111111111111111111111")
+    
     testind.createBody(space, 400,400,1)
+    testind.switchTransparancy()
+
+    
+
+
+
+
 
     create_boundaries(space, width, height)
     
