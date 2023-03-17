@@ -2,6 +2,7 @@ import pymunk as pm
 import pymunk.pygame_util
 import pygame as pg
 import numpy as np
+import matplotlib.pyplot as plt
 import random
 import time
 import ui
@@ -27,10 +28,10 @@ class App:
         self.camera.setEnv(self.env)
         self.running = True
         self.genSize = 10
-        self.genTime = 10
+        self.genTime = 5
         self.currentGen = 0
         self.genHistory = []
-        self.maxGen = 9999
+        self.maxGen = 10
         self.population = None
         self.startTime = None
         self.currentTime = None
@@ -171,10 +172,26 @@ class App:
             genAvgScore = totalScore / len(individialList)
             bestScores.append(genBestScore)
             avgScores.append(genAvgScore)
-        self.env.reset()
-        self.currentGen = 0
-        self.genHistory = []
-                       
+        
+        plt.plot(range(1,len(bestScores)+1), bestScores)
+        plt.title("Évolution du meilleur score au fil des générations")
+        plt.autoscale(True)
+        plt.xticks(np.arange(10,self.maxGen+1,10))
+        plt.ylabel("Meilleur Score")
+        plt.xlabel("Génération")
+        plt.show()
+        
+        plt.plot(range(1,len(avgScores)+1), avgScores)
+        plt.title("Évolution du score moyen au fil des générations")
+        plt.autoscale(True)
+        plt.xticks(np.arange(10,self.maxGen+1,10))
+        plt.ylabel("Meilleur Score")
+        plt.xlabel("Génération")
+        plt.show()  
+        self.uiElements["startButton"].toggled = False
+        self.uiElements["startButton"].draw()
+        self.reset()
+                 
         
         
            
