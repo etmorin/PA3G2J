@@ -163,6 +163,10 @@ class GenCounter():
         self.surface.blit(self.text, textRect)
 
 
+class StatDisplay():
+    def __init__(self, surface) -> None:
+        self.surface = surface
+
 
 """
 class TextField:

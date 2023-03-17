@@ -147,12 +147,35 @@ class App:
                     self.interactables[elem].checkClick()
     
     def genHandler(self):
-        if not self.population or self.currentGen == self.maxGen:
+        if not self.population or self.currentGen > self.maxGen:
+            self.endingHandler()
             return
         self.currentTime = time.time()
         self.uiElements["timer"].update(self.startTime, self.currentTime, self.genTime)
         if self.currentTime >= self.startTime + self.genTime:
             self.startNextGen()
+            
+    
+    def endingHandler(self):
+        if self.currentGen <= self.maxGen:
+            return
+        bestScores = []
+        avgScores = []
+        i = 1
+        for gen in self.genHistory:
+            genBestScore = gen.findBestIndividual(1)[0].get_bestScore()
+            totalScore = 0
+            individialList = gen.get_individualList()
+            for individial in individialList:
+                totalScore += individial.get_bestScore()
+            genAvgScore = totalScore / len(individialList)
+            bestScores.append(genBestScore)
+            avgScores.append(genAvgScore)
+        self.env.reset()
+        self.currentGen = 0
+        self.genHistory = []
+                       
+        
         
            
     def updateCamera(self):
