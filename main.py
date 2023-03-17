@@ -185,7 +185,7 @@ class App:
         plt.title("Évolution du score moyen au fil des générations")
         plt.autoscale(True)
         plt.xticks(np.arange(10,self.maxGen+1,10))
-        plt.ylabel("Meilleur Score")
+        plt.ylabel("Score Moyen")
         plt.xlabel("Génération")
         plt.show()  
         self.uiElements["startButton"].toggled = False
