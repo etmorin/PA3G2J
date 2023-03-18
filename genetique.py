@@ -183,7 +183,8 @@ class Individual():
         return self.bodyInSpace
     
     def switchTransparancy(self):
-        self.creature.switch_transparancy()
+        if self.creature:
+            self.creature.switch_transparancy()
 
 
 class Dna():

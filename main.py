@@ -206,7 +206,7 @@ class App:
                      bestIndividual = individual
             self.camera.setObjectToFollow(bestIndividual.get_bodyInSpace().getCenterShape())
             self.uiElements["distanceCounter"].setObjectToFollow(bestIndividual)
-        self.camera.update()
+        self.camera.update()    
  
 
     def draw(self):

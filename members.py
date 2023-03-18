@@ -61,7 +61,7 @@ class Bone(BodyPart):
         super().__init__(  posX, posY, length, width,category)
         self.shape       = pymunk.Poly.create_box(self.body,(length, width))
         self.shape.mass  = length*width/100 
-        self.shape.color = (0,0,0,255) #NOIR
+        self.shape.color = (0,0,0,0) #NOIR
         self.shape.elasticity = 0.7
         self.shape.friction   = 1 #pour ne pas glisser sur le sol
         self.shape.filter = pymunk.ShapeFilter(categories=category,mask=category)
@@ -96,7 +96,7 @@ class Articulation(BodyPart):
         super().__init__(  posX, posY, length, width, category)
         self.shape       = pymunk.Circle(self.body, self.length) #ici length=radius
         self.shape.mass  = length*2
-        self.shape.color = (255,0,0,50)#ROUGE
+        self.shape.color = (255,0,0,0)#ROUGE
         self.shape.elasticity = 0.7
         self.shape.friction   = 1 #pour ne pas glisser sur le sol
         self.shape.filter = pymunk.ShapeFilter(categories=category,mask=category)
@@ -130,7 +130,7 @@ class Torso(BodyPart):
     def round(self):
         self.shape = pymunk.Circle(self.body,self.length)
         self.shape.mass = self.length*2
-        self.shape.color = (0,255,0,255) #Vert
+        self.shape.color = (0,255,0,0) #Vert
         self.shape.filter = pymunk.ShapeFilter(categories=self.category,mask=self.category)
 
     def set_transparancy(self, newTransparancy):
@@ -276,8 +276,7 @@ class Creature():
             self.articulationList.extend(arm.get_articulationList())
             
         space.add(self.body,self.bodyShape)
-        print(self.boneList)
-        print(self.articulationList)
+
 
 
     
@@ -302,13 +301,22 @@ class Creature():
         return self.torso.get_shape()
     
     def switch_transparancy(self):
+
         if not self.transparancy:
             self.transparancy = True
-            self.torso.set_transparancy(50)
-            for bone in self.boneList:
-                bone.set_transparancy(50)
-            for articulation in self.articulationList:
-                articulation.set_transparancy(50)
+            transparancy = 0#min a value, meaning see trough
+
+        else :
+            self.transparancy = False
+            transparancy = 255#max a value, meaning opaque
+
+        self.torso.set_transparancy(transparancy)
+        for bone in self.boneList:
+            bone.set_transparancy(transparancy)
+        for articulation in self.articulationList:
+            articulation.set_transparancy(transparancy)
+        
+
         
 
 
