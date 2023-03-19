@@ -76,6 +76,7 @@ class Individual():
     
     def get_bestScore(self):
         self.updateTracker()
+        self.bestScore = self.positionTracker.getMaxRanDistance()
         return self.positionTracker.getMaxRanDistance()
     
     def set_mutationRisk(self, newMutationRisk):
