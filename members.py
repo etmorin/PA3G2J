@@ -60,7 +60,7 @@ class Bone(BodyPart):
     def __init__(self, posX, posY, length, width, category):
         super().__init__(  posX, posY, length, width,category)
         self.shape       = pymunk.Poly.create_box(self.body,(length, width))
-        self.shape.mass  = length*width/100 
+        self.shape.mass  = length*width/50 
         self.shape.color = (0,0,0,0) #NOIR
         self.shape.elasticity = 0.7
         self.shape.friction   = 1 #pour ne pas glisser sur le sol

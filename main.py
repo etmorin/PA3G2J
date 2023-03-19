@@ -3,6 +3,7 @@ import pymunk.pygame_util
 import pygame as pg
 import numpy as np
 import matplotlib.pyplot as plt
+from datetime import datetime
 import random
 import time
 import ui
@@ -11,6 +12,7 @@ from camera import Camera
 from positionTracker import *
 from members import *
 from genetique import *
+import os
 
 
 class App:
@@ -158,8 +160,13 @@ class App:
             
     
     def endingHandler(self):
+
+
         if self.currentGen <= self.maxGen:
             return
+        
+        self.saveHistory()
+        
         bestScores = []
         avgScores = []
         i = 1
@@ -191,7 +198,29 @@ class App:
         self.uiElements["startButton"].toggled = False
         self.uiElements["startButton"].draw()
         self.reset()
-                 
+    
+    def saveHistory(self):
+
+        if not os.path.exists("history"):
+            os.makedirs("history")
+
+        currentTime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
+        filename = f"history/simulation_{currentTime}.txt"
+
+        with open(filename,'w') as file:
+
+            file.write(f"Simulation from {currentTime} \n")
+            
+            for generation in self.genHistory:
+                file.write(f"Entering generation : {generation.generationDepth} \n")
+                for individual in range(self.genSize):
+                    currentIndividual = generation.individualsList[individual]
+                    currentDna = currentIndividual.dna
+                    file.write(f"{currentDna.geneString } with best score of {currentIndividual.bestScore}\n")
+
+
+
         
         
            
