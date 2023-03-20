@@ -31,7 +31,7 @@ class App:
         self.camera.setEnv(self.env)
         self.running = True
         self.genSize = 10
-        self.genTime = 10
+        self.genTime = 15
         self.currentGen = 0
         self.genHistory = []
         self.maxGen = 100
@@ -165,24 +165,26 @@ class App:
             bestScores.append(genBestScore)
             avgScores.append(genAvgScore)
 
-        bestScores_smoothed = pd.Series(bestScores).rolling(window=5).mean()
+        bestScores_smoothed = pd.Series(bestScores).expanding().mean()
        
-
+        averageScores_smoothed = pd.Series(bestScores).expanding().mean()
         
         plt.plot(range(1,len(bestScores)+1), bestScores)
         plt.plot(range(1, len(bestScores_smoothed)+1), bestScores_smoothed, label="Moyenne Mobile")
 
         plt.title("Évolution du meilleur score au fil des générations")
         plt.autoscale(True)
-        plt.xticks(np.arange(1,self.maxGen+1,5))
+        plt.xticks(np.arange(1,self.maxGen+1,1))
         plt.ylabel("Meilleur Score")
         plt.xlabel("Génération")
         plt.show()
         
         plt.plot(range(1,len(avgScores)+1), avgScores)
+        plt.plot(range(1, len(averageScores_smoothed)+1), averageScores_smoothed, label="Moyenne Mobile")
+
         plt.title("Évolution du score moyen au fil des générations")
         plt.autoscale(True)
-        plt.xticks(np.arange(1,self.maxGen+1,5))
+        plt.xticks(np.arange(1,self.maxGen+1,1))
         plt.ylabel("Score Moyen")
         plt.xlabel("Génération")
         plt.show()  
