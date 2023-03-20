@@ -28,7 +28,7 @@ class App:
         self.camera.setEnv(self.env)
         self.running = True
         self.genSize = 20
-        self.genTime = 20
+        self.genTime = 15
         self.currentGen = 0
         self.genHistory = []
         self.maxGen = 100
