@@ -58,16 +58,16 @@ class App:
         
     
     def startNextGen(self):
-        # check if score hasn't improved in 5 gen
+        # check if score hasn't improved in 10 gen
         parents = None
-        if self.currentGen > 5:
+        if self.currentGen > 10:
             multigenBestScore = 0
-            for  i in range(-1,-6,-1):
+            for  i in range(-1,-11,-1):
                 genScore = self.genHistory[i].findBestIndividual(1)[0].get_bestScore()
                 multigenBestScore = genScore if genScore > multigenBestScore else multigenBestScore
-            # if so, roll back 5 gen to gen new parents
+            # if so, roll back 10 gen to gen new parents
             if self.population.findBestIndividual(1)[0].get_bestScore() < multigenBestScore:
-                parents = self.genHistory[-5].findBestIndividual(2) if self.selectionStrat == "bestFirst" else self.genHistory[-5].get_individualList()
+                parents = self.genHistory[-10].findBestIndividual(2) if self.selectionStrat == "bestFirst" else self.genHistory[-10].get_individualList()
         # else continue
         self.genHistory.append(self.population)
         if not parents:
