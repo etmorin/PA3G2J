@@ -34,7 +34,7 @@ class App:
         self.genTime = 10
         self.currentGen = 0
         self.genHistory = []
-        self.maxGen = 10
+        self.maxGen = 100
         self.selectionStrat = "bestFirst"
         self.population = None
         self.startTime = None
@@ -68,7 +68,8 @@ class App:
             for  i in range(-1,-11,-1):
                 genScore = self.genHistory[i].findBestIndividual(1)[0].get_bestScore()
                 multigenAvg += genScore
-            multigenAvg = multigenAvg/10            # if so, roll back 10 gen to gen new parents
+            multigenAvg = multigenAvg/10
+            # if so, roll back 10 gen to gen new parents
             if self.population.findBestIndividual(1)[0].get_bestScore() < multigenAvg:
                 parents = self.genHistory[-10].findBestIndividual(2) if self.selectionStrat == "bestFirst" else self.genHistory[-10].get_individualList()
         # else continue
