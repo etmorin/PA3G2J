@@ -27,11 +27,11 @@ class App:
         self.camera.setDrawOptions(self.drawOptions)
         self.camera.setEnv(self.env)
         self.running = True
-        self.genSize = 10
-        self.genTime = 5
+        self.genSize = 20
+        self.genTime = 20
         self.currentGen = 0
         self.genHistory = []
-        self.maxGen = 10
+        self.maxGen = 100
         self.selectionStrat = "bestFirst"
         self.population = None
         self.startTime = None
@@ -61,12 +61,13 @@ class App:
         # check if score hasn't improved in 10 gen
         parents = None
         if self.currentGen > 10:
-            multigenBestScore = 0
+            multigenAvg = 0
             for  i in range(-1,-11,-1):
                 genScore = self.genHistory[i].findBestIndividual(1)[0].get_bestScore()
-                multigenBestScore = genScore if genScore > multigenBestScore else multigenBestScore
+                multigenAvg += genScore
+            multigenAvg = multigenAvg/10
             # if so, roll back 10 gen to gen new parents
-            if self.population.findBestIndividual(1)[0].get_bestScore() < multigenBestScore:
+            if self.population.findBestIndividual(1)[0].get_bestScore() < multigenAvg:
                 parents = self.genHistory[-10].findBestIndividual(2) if self.selectionStrat == "bestFirst" else self.genHistory[-10].get_individualList()
         # else continue
         self.genHistory.append(self.population)
