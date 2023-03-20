@@ -11,6 +11,9 @@ from camera import Camera
 from positionTracker import *
 from members import *
 from genetique import *
+import pandas as pd
+import os
+from datetime import datetime
 
 
 class App:
@@ -28,7 +31,7 @@ class App:
         self.camera.setEnv(self.env)
         self.running = True
         self.genSize = 10
-        self.genTime = 5
+        self.genTime = 10
         self.currentGen = 0
         self.genHistory = []
         self.maxGen = 10
@@ -61,12 +64,12 @@ class App:
         # check if score hasn't improved in 10 gen
         parents = None
         if self.currentGen > 10:
-            multigenBestScore = 0
+            multigenAvg = 0
             for  i in range(-1,-11,-1):
                 genScore = self.genHistory[i].findBestIndividual(1)[0].get_bestScore()
-                multigenBestScore = genScore if genScore > multigenBestScore else multigenBestScore
-            # if so, roll back 10 gen to gen new parents
-            if self.population.findBestIndividual(1)[0].get_bestScore() < multigenBestScore:
+                multigenAvg += genScore
+            multigenAvg = multigenAvg/10            # if so, roll back 10 gen to gen new parents
+            if self.population.findBestIndividual(1)[0].get_bestScore() < multigenAvg:
                 parents = self.genHistory[-10].findBestIndividual(2) if self.selectionStrat == "bestFirst" else self.genHistory[-10].get_individualList()
         # else continue
         self.genHistory.append(self.population)
@@ -143,8 +146,11 @@ class App:
             
     
     def endingHandler(self):
+
         if self.currentGen <= self.maxGen:
             return
+        
+        self.saveHistory()
         bestScores = []
         avgScores = []
         i = 1
@@ -157,11 +163,17 @@ class App:
             genAvgScore = totalScore / len(individialList)
             bestScores.append(genBestScore)
             avgScores.append(genAvgScore)
+
+        bestScores_smoothed = pd.Series(bestScores).rolling(window=5).mean()
+       
+
         
         plt.plot(range(1,len(bestScores)+1), bestScores)
+        plt.plot(range(1, len(bestScores_smoothed)+1), bestScores_smoothed, label="Moyenne Mobile")
+
         plt.title("Évolution du meilleur score au fil des générations")
         plt.autoscale(True)
-        plt.xticks(np.arange(10,self.maxGen+1,10))
+        plt.xticks(np.arange(1,self.maxGen+1,5))
         plt.ylabel("Meilleur Score")
         plt.xlabel("Génération")
         plt.show()
@@ -169,7 +181,7 @@ class App:
         plt.plot(range(1,len(avgScores)+1), avgScores)
         plt.title("Évolution du score moyen au fil des générations")
         plt.autoscale(True)
-        plt.xticks(np.arange(10,self.maxGen+1,10))
+        plt.xticks(np.arange(1,self.maxGen+1,5))
         plt.ylabel("Score Moyen")
         plt.xlabel("Génération")
         plt.show()  
@@ -213,6 +225,38 @@ class App:
             clock.tick(self.fps)
         pg.display.quit()
         pg.quit()
+    
+    def saveHistory(self):
+
+        
+        best = None
+        bestIndividual = None
+
+        if not os.path.exists("history"):
+            os.makedirs("history")
+
+        currentTime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
+        filename = f"history/simulation_{currentTime}.txt"
+
+        with open(filename,'w') as file:
+
+            file.write(f"Simulation from {currentTime} \n")
+
+            for generation in self.genHistory:
+                file.write(f"Entering generation : {generation.generationDepth} \n")
+                for individual in range(self.genSize):
+                    currentIndividual = generation.individualsList[individual]
+                    currentDna = currentIndividual.dna
+                    file.write(f"{currentDna.geneString } with best score of {currentIndividual.bestScore}\n")
+                    if not best or currentIndividual.bestScore > best :
+                        best = currentIndividual.bestScore
+                        bestIndividual = currentIndividual
+
+            file.write(f"Best overall individual is \n {bestIndividual.dna.geneString} with a score of {best}")
+
+
+
 
 
 def setup():
