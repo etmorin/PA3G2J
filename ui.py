@@ -70,8 +70,9 @@ class ToggleButton(Button):
 class cycleButton(Button):
     def __init__(self, baseText, pos, size, surface, funcList=[], textList=[]) -> None:
         super().__init__(baseText, pos, size, surface, funcList)
-        self.textList = textList
+        self.textList = []
         self.textList.append(baseText)
+        self.func = []
         self.func.append(lambda: True)
         self.state = 0
         

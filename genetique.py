@@ -1,4 +1,5 @@
 import random
+import numpy as np
 from members import *
 from positionTracker import *
 
@@ -389,7 +390,8 @@ class Generation():
                 newGen : un objet de type génération contenant sizeOfGeneration individus
         
         """
-        
+        if len(parents) == sizeOfGeneration:
+            return self.createNextGenerationWeighted(parents)
 
         bestIndividuals = parents
         newGen  = Generation(self.generationDepth+1,sizeOfGeneration, self.space)
@@ -398,6 +400,18 @@ class Generation():
             newIndividual = bestIndividuals[0].reproduce(bestIndividuals[1])
             newGen.add_individual(newIndividual)
 
+        return newGen
+    
+    def createNextGenerationWeighted(self, parents):
+        weights = [individual.get_bestScore()*100 for individual in parents]
+        for weight in weights:
+            print("weight: {}, sum : {}".format(weight, sum(weights)))
+            weight = weight/sum(weights)
+        newGen  = Generation(self.generationDepth+1, len(parents), self.space)
+        for i in range(len(parents)):
+            parent1, parent2 = np.random.choice(self.population,size=2,replace=False,p=weights)
+            child = parent1.reproduce(parent2)
+            newGen.add_individual(child)
         return newGen
     
     def createFirstGen(self, sizeOfGeneration):

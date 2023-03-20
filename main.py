@@ -3,7 +3,6 @@ import pymunk.pygame_util
 import pygame as pg
 import numpy as np
 import matplotlib.pyplot as plt
-from datetime import datetime
 import random
 import time
 import ui
@@ -12,7 +11,6 @@ from camera import Camera
 from positionTracker import *
 from members import *
 from genetique import *
-import os
 
 
 class App:
@@ -34,6 +32,7 @@ class App:
         self.currentGen = 0
         self.genHistory = []
         self.maxGen = 10
+        self.selectionStrat = "bestFirst"
         self.population = None
         self.startTime = None
         self.currentTime = None
@@ -53,53 +52,26 @@ class App:
         counter.next()
         self.uiElements["genCounter"] = counter
         self.uiElements["obstacleToggle"].lock()
-        
-
-
-
-        """for i in range(self.genSize):
-            creature = Creature(self.env.space, 0, 50, 20, 2, 40, 5, 5, 1, 2000, 2**i)
-            positionTracker = PositionTracker()
-            positionTracker.setObjectToFollow(creature.getCenterShape())
-            dna = Dna(None).paramToDna(dict(zip(PARAMETERS,creature.parameters)))
-            indinvidual = Individual(dna,creature)
-            self.population.append(indinvidual)
-            self.trackers.append(positionTracker)"""
-        
-        """weights = [tracker.getMaxRanDistance()*100 for tracker in self.trackers]
-        for weight in weights:
-            print("weight: {}, sum : {}".format(weight, sum(weights)))
-            weight = weight/sum(weights)
-        newGeneration = []
-        for i in range(self.genSize):
-            parent1, parent2 = np.random.choice(self.population,size=2,replace=False,p=weights)
-            child = parent1.reproduce(parent2)
-            newGeneration.append(child)
-        self.env.reset()
-        self.currentGen += 1
-        self.population = newGeneration
-        for individual in self.population:
-            parameters = Dna.dnaToParam(indinvidual.get_dna())
-            parameters["space"] = self.env.space
-            parameters["posX"] = 0
-            parameters["posY"] = 50
-            individual.set_bodyInSpace(Creature(**parameters))"""
+        self.uiElements["selectionToggle"].lock()
             
         
         
     
     def startNextGen(self):
+        # check if score hasn't improved in 5 gen
         parents = None
         if self.currentGen > 5:
             multigenBestScore = 0
             for  i in range(-1,-6,-1):
                 genScore = self.genHistory[i].findBestIndividual(1)[0].get_bestScore()
                 multigenBestScore = genScore if genScore > multigenBestScore else multigenBestScore
+            # if so, roll back 5 gen to gen new parents
             if self.population.findBestIndividual(1)[0].get_bestScore() < multigenBestScore:
-                parents = self.genHistory[-5].findBestIndividual(2)      
+                parents = self.genHistory[-5].findBestIndividual(2) if self.selectionStrat == "bestFirst" else self.genHistory[-5].get_individualList()
+        # else continue
         self.genHistory.append(self.population)
         if not parents:
-            parents = self.population.findBestIndividual(2)
+            parents = self.population.findBestIndividual(2) if self.selectionStrat == "bestFirst" else self.population.get_individualList()
         newPopulation = self.population.createNextGeneration(self.genSize, parents)
         self.population = newPopulation
         self.currentGen += 1
@@ -116,10 +88,14 @@ class App:
         self.uiElements["distanceCounter"].reset()
         self.uiElements["genCounter"].reset()
         self.uiElements["obstacleToggle"].unlock()
+        self.uiElements["selectionToggle"].unlock()
         self.population = None
         self.currentGen = 0
         self.env.reset()
         self.run()
+    
+    def changeSelectionStrat(self,strat):
+        self.selectionStrat = strat
     
     def setupUI(self):
         startButton = ui.ToggleButton("Start", "Reset", (860,650),(100,50), self.window, lambda:self.start(), lambda:self.reset())
@@ -134,6 +110,13 @@ class App:
         
         self.uiElements["obstacleToggle"] = obstacleToggle
         self.interactables["obstacleToggle"] = obstacleToggle
+        
+        selectionToggle = ui.cycleButton("Mode de Sélection : Meilleur Toujours", (self.WIDTH/2-380,475),(760,50), self.window)
+        selectionToggle.addFunc(lambda:self.changeSelectionStrat("bestFirst"), "Mode de Sélection : Performances Pondérées")
+        selectionToggle.addFunc(lambda:self.changeSelectionStrat("weighted") , "Mode de Sélection : Meilleur Toujours")
+        
+        self.uiElements["selectionToggle"] = selectionToggle
+        self.interactables["selectionToggle"] = selectionToggle
 
     
     def eventHandler(self, events):
@@ -160,13 +143,8 @@ class App:
             
     
     def endingHandler(self):
-
-
         if self.currentGen <= self.maxGen:
             return
-        
-        self.saveHistory()
-        
         bestScores = []
         avgScores = []
         i = 1
@@ -183,7 +161,7 @@ class App:
         plt.plot(range(1,len(bestScores)+1), bestScores)
         plt.title("Évolution du meilleur score au fil des générations")
         plt.autoscale(True)
-        plt.xticks(np.arange(1,self.maxGen+1,1))
+        plt.xticks(np.arange(10,self.maxGen+1,10))
         plt.ylabel("Meilleur Score")
         plt.xlabel("Génération")
         plt.show()
@@ -191,45 +169,14 @@ class App:
         plt.plot(range(1,len(avgScores)+1), avgScores)
         plt.title("Évolution du score moyen au fil des générations")
         plt.autoscale(True)
-        plt.xticks(np.arange(1,self.maxGen+1,1))
+        plt.xticks(np.arange(10,self.maxGen+1,10))
         plt.ylabel("Score Moyen")
         plt.xlabel("Génération")
         plt.show()  
         self.uiElements["startButton"].toggled = False
         self.uiElements["startButton"].draw()
         self.reset()
-    
-    def saveHistory(self):
-
-        best = None
-        bestIndividual = None
-
-        if not os.path.exists("history"):
-            os.makedirs("history")
-
-        currentTime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-
-        filename = f"history/simulation_{currentTime}.txt"
-
-        with open(filename,'w') as file:
-
-            file.write(f"Simulation from {currentTime} \n")
-            
-            for generation in self.genHistory:
-                file.write(f"Entering generation : {generation.generationDepth} \n")
-                for individual in range(self.genSize):
-                    
-                    currentIndividual = generation.individualsList[individual]
-                    currentDna = currentIndividual.dna
-                    file.write(f"{currentDna.geneString } with best score of {currentIndividual.bestScore}\n")
-                    if not best or currentIndividual.bestScore > best :
-                        best = currentIndividual.bestScore
-                        bestIndividual = currentIndividual
-            
-            file.write(f"Best overall individual is \n {bestIndividual.dna.geneString} with a score of {best}")
-
-
-
+                 
         
         
            
