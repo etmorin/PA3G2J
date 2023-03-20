@@ -18,12 +18,12 @@ from datetime import datetime
 
 class App:
     def __init__(self) -> None:
-        self.WIDTH = 980
-        self.HEIGHT = 720
+        self.WIDTH = 1920
+        self.HEIGHT = 1080
         self.fps = 60
         self.dt = 1/self.fps
         self.window = pg.display.set_mode((self.WIDTH, self.HEIGHT))
-        self.physicsWindow = self.window.subsurface(pg.Rect(self.WIDTH/4,self.HEIGHT/20,self.WIDTH/2,self.HEIGHT/2))
+        self.physicsWindow = self.window.subsurface(pg.Rect(self.WIDTH/8,self.HEIGHT/20,self.WIDTH/1.3,self.HEIGHT/1.3))
         self.env = Env(self.physicsWindow)
         self.drawOptions = pymunk.pygame_util.DrawOptions(self.physicsWindow)
         self.camera = Camera()
@@ -102,12 +102,12 @@ class App:
         self.selectionStrat = strat
     
     def setupUI(self):
-        startButton = ui.ToggleButton("Start", "Reset", (860,650),(100,50), self.window, lambda:self.start(), lambda:self.reset())
+        startButton = ui.ToggleButton("Start", "Reset", (1780,950),(100,50), self.window, lambda:self.start(), lambda:self.reset())
         self.interactables["startButton"] = startButton
         self.uiElements["startButton"] = startButton
         distanceCounter = ui.DistanceCounter(self.window)
         self.uiElements["distanceCounter"] = distanceCounter
-        obstacleToggle = ui.cycleButton("Changer les obstacles", (self.WIDTH/2-190,400),(380,50), self.window)
+        obstacleToggle = ui.cycleButton("Changer les obstacles", (self.WIDTH/2-190,self.HEIGHT-180),(380,50), self.window)
         obstacleToggle.addFunc(lambda:self.env.createObstacleSet("hedges"), "Aucun")
         obstacleToggle.addFunc(lambda:self.env.createObstacleSet("incline") , "100m haies")
         obstacleToggle.addFunc(lambda:self.env.resetObstacles(), "pente")
@@ -115,7 +115,7 @@ class App:
         self.uiElements["obstacleToggle"] = obstacleToggle
         self.interactables["obstacleToggle"] = obstacleToggle
         
-        selectionToggle = ui.cycleButton("Mode de Sélection : Meilleur Toujours", (self.WIDTH/2-380,475),(760,50), self.window)
+        selectionToggle = ui.cycleButton("Mode de Sélection : Meilleur Toujours", (self.WIDTH/2-380, self.HEIGHT-125),(760,50), self.window)
         selectionToggle.addFunc(lambda:self.changeSelectionStrat("bestFirst"), "Mode de Sélection : Performances Pondérées")
         selectionToggle.addFunc(lambda:self.changeSelectionStrat("weighted") , "Mode de Sélection : Meilleur Toujours")
         
