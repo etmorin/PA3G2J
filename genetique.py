@@ -6,7 +6,7 @@ PARAMETERS = ["bodySize", "nbrOfArms", "lengthBones",
                        "widthBones", "radiusArticulations",
                        "numberOfArticulations", "muscleStrength","asymetry"]
 
-PARAM_MIN_MAX = [[10,121], [1,8],[10,100], [5,60],[2,32],[1,7],[200,5000],[1,15]]
+PARAM_MIN_MAX = [[10,121], [1,8],[10,100], [5,60],[2,32],[1,7],[1000,5000],[1,15]]
 
 ADN_LENGTH = 32
 

@@ -183,7 +183,7 @@ class App:
         plt.plot(range(1,len(bestScores)+1), bestScores)
         plt.title("Évolution du meilleur score au fil des générations")
         plt.autoscale(True)
-        plt.xticks(np.arange(10,self.maxGen+1,10))
+        plt.xticks(np.arange(1,self.maxGen+1,1))
         plt.ylabel("Meilleur Score")
         plt.xlabel("Génération")
         plt.show()
@@ -191,7 +191,7 @@ class App:
         plt.plot(range(1,len(avgScores)+1), avgScores)
         plt.title("Évolution du score moyen au fil des générations")
         plt.autoscale(True)
-        plt.xticks(np.arange(10,self.maxGen+1,10))
+        plt.xticks(np.arange(1,self.maxGen+1,1))
         plt.ylabel("Score Moyen")
         plt.xlabel("Génération")
         plt.show()  
@@ -200,6 +200,9 @@ class App:
         self.reset()
     
     def saveHistory(self):
+
+        best = None
+        bestIndividual = None
 
         if not os.path.exists("history"):
             os.makedirs("history")
@@ -215,9 +218,15 @@ class App:
             for generation in self.genHistory:
                 file.write(f"Entering generation : {generation.generationDepth} \n")
                 for individual in range(self.genSize):
+                    
                     currentIndividual = generation.individualsList[individual]
                     currentDna = currentIndividual.dna
                     file.write(f"{currentDna.geneString } with best score of {currentIndividual.bestScore}\n")
+                    if not best or currentIndividual.bestScore > best :
+                        best = currentIndividual.bestScore
+                        bestIndividual = currentIndividual
+            
+            file.write(f"Best overall individual is \n {bestIndividual.dna.geneString} with a score of {best}")
 
 
 
