@@ -409,7 +409,7 @@ class Generation():
             weight = weight/sum(weights)
         newGen  = Generation(self.generationDepth+1, len(parents), self.space)
         for i in range(len(parents)):
-            parent1, parent2 = np.random.choice(self.population,size=2,replace=False,p=weights)
+            parent1, parent2 = np.random.choice(parents,size=2,replace=False,p=weights)
             child = parent1.reproduce(parent2)
             newGen.add_individual(child)
         return newGen
