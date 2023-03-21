@@ -404,12 +404,14 @@ class Generation():
     
     def createNextGenerationWeighted(self, parents):
         weights = [individual.get_bestScore()*100 for individual in parents]
+        probs = []
         for weight in weights:
             print("weight: {}, sum : {}".format(weight, sum(weights)))
-            weight = weight/sum(weights)
+            probs.append(weight/sum(weights))
         newGen  = Generation(self.generationDepth+1, len(parents), self.space)
         for i in range(len(parents)):
-            parent1, parent2 = np.random.choice(parents,size=2,replace=False,p=weights)
+            print("sum : {}".format(sum(weights)))
+            parent1, parent2 = np.random.choice(parents,size=2,replace=False,p=probs)
             child = parent1.reproduce(parent2)
             newGen.add_individual(child)
         return newGen

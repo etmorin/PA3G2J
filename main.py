@@ -34,7 +34,7 @@ class App:
         self.genTime = 15
         self.currentGen = 0
         self.genHistory = []
-        self.maxGen = 100
+        self.maxGen = 50
         self.selectionStrat = "bestFirst"
         self.population = None
         self.startTime = None
