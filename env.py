@@ -8,6 +8,7 @@ class Env:
         self.space = pm.Space()
         self.space.gravity =(0, -981)
         self.floorIncline = 0
+        self.currentObstacles = "Aucun"
         pymunk.pygame_util.positive_y_is_up = True
         self.floor = self.createFloor()
     
@@ -38,6 +39,7 @@ class Env:
         
     
     def createObstacleSet(self, obstacles):
+        self.currentObstacles = obstacles
         if obstacles == "hedges":
             self.resetObstacles()
             self.createHedges()
@@ -68,9 +70,12 @@ class Env:
  
     def reset(self):
         incline = self.floorIncline
+        currentObstacles = self.currentObstacles
         self.__init__(self.window)
         self.floorIncline = incline
         self.resetFloor()
+        self.resetObstacles()
+        self.createObstacleSet(currentObstacles)
     
     def step(self,dt):
         self.space.step(dt)
