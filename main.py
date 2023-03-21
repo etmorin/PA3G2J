@@ -110,7 +110,7 @@ class App:
         obstacleToggle = ui.cycleButton("Changer les obstacles", (self.WIDTH/2-190,self.HEIGHT-180),(380,50), self.window)
         obstacleToggle.addFunc(lambda:self.env.createObstacleSet("hedges"), "Aucun")
         obstacleToggle.addFunc(lambda:self.env.createObstacleSet("incline") , "100m haies")
-        obstacleToggle.addFunc(lambda:self.env.resetObstacles(), "pente")
+        obstacleToggle.addFunc(lambda:self.env.createObstacleSet("Aucun"), "pente")
         
         self.uiElements["obstacleToggle"] = obstacleToggle
         self.interactables["obstacleToggle"] = obstacleToggle

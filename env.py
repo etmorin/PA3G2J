@@ -47,6 +47,8 @@ class Env:
             self.resetObstacles()
             self.set_floorIncline(5)
             self.resetFloor()
+        else:
+            self.resetObstacles()
             
     def createHedges(self):
         for i in range(5,110,5):
