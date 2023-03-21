@@ -116,8 +116,9 @@ class App:
         self.interactables["obstacleToggle"] = obstacleToggle
         
         selectionToggle = ui.cycleButton("Mode de Sélection : Meilleur Toujours", (self.WIDTH/2-380, self.HEIGHT-125),(760,50), self.window)
-        selectionToggle.addFunc(lambda:self.changeSelectionStrat("bestFirst"), "Mode de Sélection : Performances Pondérées")
         selectionToggle.addFunc(lambda:self.changeSelectionStrat("weighted") , "Mode de Sélection : Meilleur Toujours")
+        selectionToggle.addFunc(lambda:self.changeSelectionStrat("bestFirst"), "Mode de Sélection : Performances Pondérées")
+        
         
         self.uiElements["selectionToggle"] = selectionToggle
         self.interactables["selectionToggle"] = selectionToggle
