@@ -403,7 +403,7 @@ class Generation():
         return newGen
     
     def createNextGenerationWeighted(self, parents):
-        weights = [individual.get_bestScore()*100 for individual in parents]
+        weights = [(individual.get_bestScore()+100)*100 for individual in parents]
         probs = []
         for weight in weights:
             print("weight: {}, sum : {}".format(weight, sum(weights)))

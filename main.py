@@ -20,7 +20,7 @@ class App:
     def __init__(self) -> None:
         self.WIDTH = 1920
         self.HEIGHT = 1080
-        self.fps = 60
+        self.fps = 54
         self.dt = 1/self.fps
         self.window = pg.display.set_mode((self.WIDTH, self.HEIGHT))
         self.physicsWindow = self.window.subsurface(pg.Rect(self.WIDTH/8,self.HEIGHT/20,self.WIDTH/1.3,self.HEIGHT/1.3))
@@ -30,11 +30,11 @@ class App:
         self.camera.setDrawOptions(self.drawOptions)
         self.camera.setEnv(self.env)
         self.running = True
-        self.genSize = 10
-        self.genTime = 15
+        self.genSize = 6
+        self.genTime = 25
         self.currentGen = 0
         self.genHistory = []
-        self.maxGen = 50
+        self.maxGen = 1000
         self.selectionStrat = "bestFirst"
         self.population = None
         self.startTime = None
@@ -61,17 +61,17 @@ class App:
         
     
     def startNextGen(self):
-        # check if score hasn't improved in 10 gen
+        # check if score hasn't improved in 5 gen
         parents = None
-        if self.currentGen > 10:
+        if self.currentGen > 5:
             multigenAvg = 0
-            for  i in range(-1,-11,-1):
+            for  i in range(-1,-6,-1):
                 genScore = self.genHistory[i].findBestIndividual(1)[0].get_bestScore()
                 multigenAvg += genScore
             multigenAvg = multigenAvg/10
-            # if so, roll back 10 gen to gen new parents
+            # if so, roll back 5 gen to gen new parents
             if self.population.findBestIndividual(1)[0].get_bestScore() < multigenAvg:
-                parents = self.genHistory[-10].findBestIndividual(2) if self.selectionStrat == "bestFirst" else self.genHistory[-10].get_individualList()
+                parents = self.genHistory[-5].findBestIndividual(2) if self.selectionStrat == "bestFirst" else self.genHistory[-5].get_individualList()
         # else continue
         self.genHistory.append(self.population)
         if not parents:
