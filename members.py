@@ -23,9 +23,7 @@ class BodyPart:
         self.shape  = None
         self.body.position = (posX, posY)
         self.category = category
-
-
-       
+ 
     def get_shape(self):
         return self.shape
     
@@ -126,7 +124,6 @@ class Torso(BodyPart):
         super().__init__(posX, posY, length, width,category)
         self.category = category
 
-
     def round(self):
         self.shape = pymunk.Circle(self.body,self.length)
         self.shape.mass = self.length*2
@@ -174,7 +171,6 @@ class Arm(BodyPart):
         self.boneList = [ self.bone1]
         self.articulationList = []
         
-
         for i in range(1,numberOfArticulations+1):
             self.add_articulation(i, posX, posY, length, width, articulationSize, category, side)
             length,width,articulationSize = self.sizeRefactoring(length,width,articulationSize,factor)

@@ -31,10 +31,10 @@ class App:
         self.camera.setEnv(self.env)
         self.running = True
         self.genSize = 6
-        self.genTime = 25
+        self.genTime = 10
         self.currentGen = 0
         self.genHistory = []
-        self.maxGen = 1000
+        self.maxGen = 100
         self.selectionStrat = "bestFirst"
         self.population = None
         self.startTime = None
@@ -57,8 +57,6 @@ class App:
         self.uiElements["obstacleToggle"].lock()
         self.uiElements["selectionToggle"].lock()
             
-        
-        
     
     def startNextGen(self):
         # check if score hasn't improved in 5 gen
@@ -88,6 +86,11 @@ class App:
         self.startTime = time.time()
 
     def reset(self):
+        
+        if self.population and self.currentGen > 0:
+            self.saveHistory()
+            self.displayGraphs()
+
         del self.uiElements["timer"]
         self.uiElements["distanceCounter"].reset()
         self.uiElements["genCounter"].reset()
@@ -123,10 +126,10 @@ class App:
         self.uiElements["selectionToggle"] = selectionToggle
         self.interactables["selectionToggle"] = selectionToggle
 
-    
     def eventHandler(self, events):
         for event in events:
             if event.type == pg.QUIT:
+                self.onExit()
                 self.running = False
                 break
             
@@ -137,22 +140,14 @@ class App:
                 for elem in self.interactables:
                     self.interactables[elem].checkClick()
     
-    def genHandler(self):
+    def onExit(self):
         if not self.population or self.currentGen > self.maxGen:
             self.endingHandler()
             return
-        self.currentTime = time.time()
-        self.uiElements["timer"].update(self.startTime, self.currentTime, self.genTime)
-        if self.currentTime >= self.startTime + self.genTime:
-            self.startNextGen()
-            
-    
-    def endingHandler(self):
-
-        if self.currentGen <= self.maxGen:
-            return
-        
         self.saveHistory()
+        self.displayGraphs()
+
+    def displayGraphs(self):
         bestScores = []
         avgScores = []
         i = 1
@@ -167,33 +162,45 @@ class App:
             avgScores.append(genAvgScore)
 
         bestScores_smoothed = pd.Series(bestScores).expanding().mean()
-       
         averageScores_smoothed = pd.Series(bestScores).expanding().mean()
-        
-        plt.plot(range(1,len(bestScores)+1), bestScores)
-        plt.plot(range(1, len(bestScores_smoothed)+1), bestScores_smoothed, label="Moyenne Mobile")
 
+        plt.plot(range(1, len(bestScores) + 1), bestScores)
+        plt.plot(range(1, len(bestScores_smoothed) + 1), bestScores_smoothed, label="Moyenne Mobile")
         plt.title("Évolution du meilleur score au fil des générations")
         plt.autoscale(True)
-        plt.xticks(np.arange(1,self.maxGen+1,1))
+        plt.xticks(np.arange(1, self.maxGen + 1, 1))
         plt.ylabel("Meilleur Score")
         plt.xlabel("Génération")
         plt.show()
-        
-        plt.plot(range(1,len(avgScores)+1), avgScores)
-        plt.plot(range(1, len(averageScores_smoothed)+1), averageScores_smoothed, label="Moyenne Mobile")
 
+        plt.plot(range(1, len(avgScores) + 1), avgScores)
+        plt.plot(range(1, len(averageScores_smoothed) + 1), averageScores_smoothed, label="Moyenne Mobile")
         plt.title("Évolution du score moyen au fil des générations")
         plt.autoscale(True)
-        plt.xticks(np.arange(1,self.maxGen+1,1))
+        plt.xticks(np.arange(1, self.maxGen + 1, 1))
         plt.ylabel("Score Moyen")
         plt.xlabel("Génération")
-        plt.show()  
+        plt.show()
+        
+
+    def genHandler(self):
+        if not self.population or self.currentGen > self.maxGen:
+            self.endingHandler()
+            return
+        self.currentTime = time.time()
+        self.uiElements["timer"].update(self.startTime, self.currentTime, self.genTime)
+        if self.currentTime >= self.startTime + self.genTime:
+            self.startNextGen()
+            
+    
+    def endingHandler(self):
+        if self.currentGen <= self.maxGen:
+            return
+        
+        self.saveHistory()
         self.uiElements["startButton"].toggled = False
         self.uiElements["startButton"].draw()
         self.reset()
-                 
-        
         
            
     def updateCamera(self):
@@ -258,9 +265,6 @@ class App:
                         bestIndividual = currentIndividual
 
             file.write(f"Best overall individual is \n {bestIndividual.dna.geneString} with a score of {best}")
-
-
-
 
 
 def setup():
