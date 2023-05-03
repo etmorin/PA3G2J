@@ -23,6 +23,9 @@ class Camera:
         self.env = env
     
     def drawGraduations(self):
+        """
+        Draws the graduation shapes on the floor.
+        """
         halfWindowSize = self.drawOptions.surface.get_width()
         for value, graduation in self.env.graduation.items():
             if not self.objectPosition.x/100 - halfWindowSize/100 <= value or  not value <= self.objectPosition.x/100 + halfWindowSize/100:
@@ -32,7 +35,11 @@ class Camera:
             textRect = text.get_rect(center=(posx + self.offset.x, -posy + self.drawOptions.surface.get_height() - self.offset.y + 25))
             self.drawOptions.surface.blit(text, textRect)
         
+    
     def update(self):
+        """
+        Updates the camera position and draws the environment. according to the current camera settings
+        """
         if not self.objectToFollow:
             self.env.space.debug_draw(self.drawOptions)
             return
