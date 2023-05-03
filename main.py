@@ -45,6 +45,9 @@ class App:
         self.setupUI()
 
     def start(self):
+        """
+        Starts the simulation with the setting set before pressing start
+        """
         self.population = Generation(self.currentGen, self.genSize, self.env.space)
         self.currentGen += 1
         self.startTime = time.time()
