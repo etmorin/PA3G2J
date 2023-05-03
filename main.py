@@ -18,6 +18,7 @@ from datetime import datetime
 
 class App:
     def __init__(self) -> None:
+
         self.WIDTH = 1920
         self.HEIGHT = 1080
         self.fps = 54
@@ -39,16 +40,65 @@ class App:
         self.population = None
         self.startTime = None
         self.currentTime = None
-        
         self.uiElements = {}
         self.interactables = {}
         self.setupUI()
 
+    def display_input_window(self):
+
+        input_window = pg.display.set_mode((400, 300))
+        pg.display.set_caption("Input Parameters")
+
+        font = pg.font.Font(None, 32)
+        self.input_boxes = [
+            ui.InputBox(150, 30, 140, 32, font, "Gen Size"),
+            ui.InputBox(150, 90, 140, 32, font, "Gen Time"),
+            ui.InputBox(150, 150, 140, 32, font, "Max Gen"),
+        ]
+        submit_button = ui.Button("Submit", (150, 210), (100, 50), input_window, self.submit)
+
+        self.done = False
+        self.submitted = False
+
+        while not self.done:
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    self.done = True
+                    self.submitted = False
+                for box in self.input_boxes:
+                    box.handle_event(event)
+
+                if submit_button.checkClick2(event):
+                    self.submit()
+
+            input_window.fill((255, 255, 255))
+            for box in self.input_boxes:
+                box.draw(input_window)
+            submit_button.draw()
+            pg.display.flip()
+            pg.time.Clock().tick(30)
+
+        pg.display.set_caption("Main Window")
+        print("exiting submitted prompt window")
+        return self.submitted
+
+    def submit(self):
+        genSize_input = int(self.input_boxes[0].text)
+        genTime_input = int(self.input_boxes[1].text)
+        maxGen_input = int(self.input_boxes[2].text)
+        if genSize_input > 0 and genTime_input > 0 and maxGen_input > 0:
+            self.genSize = genSize_input
+            self.genTime = genTime_input
+            self.maxGen = maxGen_input
+            self.done = True
+            self.submitted = True
+        
+
     def start(self):
+        
         self.population = Generation(self.currentGen, self.genSize, self.env.space)
         self.currentGen += 1
         self.startTime = time.time()
-        
         timer = ui.GenTimer(self.physicsWindow)
         self.uiElements["timer"] = timer
         counter = ui.GenCounter(self.window)
@@ -87,9 +137,10 @@ class App:
 
     def reset(self):
         
-        if self.population and self.currentGen > 0:
+        """        if self.population and self.currentGen > 0:
             self.saveHistory()
-            self.displayGraphs()
+            self.displayGraphs()"""
+
 
         del self.uiElements["timer"]
         self.uiElements["distanceCounter"].reset()
@@ -105,6 +156,7 @@ class App:
         self.selectionStrat = strat
     
     def setupUI(self):
+
         startButton = ui.ToggleButton("Start", "Reset", (1780,950),(100,50), self.window, lambda:self.start(), lambda:self.reset())
         self.interactables["startButton"] = startButton
         self.uiElements["startButton"] = startButton
@@ -227,6 +279,16 @@ class App:
 
 
     def run(self):
+
+        if not self.display_input_window():
+            print("test entering displayinput")
+            self.running = False
+        else:
+            self.running = True
+
+        print("entering main run loop")
+        print(f"{self.genSize} and {self.genTime} and {self.maxGen}")
+        self.window = pg.display.set_mode((self.WIDTH, self.HEIGHT))
         clock = pg.time.Clock()
         while self.running:
             self.eventHandler(pg.event.get())
@@ -236,7 +298,7 @@ class App:
             clock.tick(self.fps)
         pg.display.quit()
         pg.quit()
-    
+        
     def saveHistory(self):
 
         
@@ -265,6 +327,7 @@ class App:
                         bestIndividual = currentIndividual
 
             file.write(f"Best overall individual is \n {bestIndividual.dna.geneString} with a score of {best}")
+
 
 
 def setup():

@@ -37,6 +37,16 @@ class Button:
         mousePos = pg.mouse.get_pos()
         if self.topRect.collidepoint(mousePos):
                 self.onClick()
+    
+    def checkClick2(self, event):
+        if self.locked:
+            return False
+        if event.type == pg.MOUSEBUTTONUP:
+            mousePos = event.pos
+            if self.topRect.collidepoint(mousePos):
+                self.onClick()
+                return True
+        return False
 
 
     def onClick(self):
@@ -93,6 +103,8 @@ class cycleButton(Button):
         self.func[self.state]()
         self.state = (self.state + 1) % len(self.textList)
         if(self.state == 0): self.state = 1
+    
+
     
 
 
@@ -169,56 +181,36 @@ class StatDisplay():
         self.surface = surface
 
 
-"""
-class TextField:
-    def init(self, window, position=(0,0),dimension=(300,50),maximum=100):
-        self.postion = position
-        self.dimension = dimension
-        self.window = window
-        self.text = "None"
+
+class InputBox:
+    def __init__(self, x, y, w, h, font, label):
+        self.rect = pg.Rect(x, y, w, h)
+        self.color = pg.Color('black')
+        self.text = ''
+        self.font = font
+        self.txt_surface = self.font.render(self.text, True, self.color)
         self.active = False
-        self.maxC = maximum
-        self.alphabet = string.ascii_letters + string.digits + string.punctuation + " "
+        self.label = label
+        self.label_surface = self.font.render(self.label, True, self.color)
 
-    def draw(self):
-        self.drawBG()
-        self.drawText()
+    def handle_event(self, event):
+        if event.type == pg.MOUSEBUTTONDOWN:
+            if self.rect.collidepoint(event.pos):
+                self.active = not self.active
+            else:
+                self.active = False
+            self.color = pg.Color('blue') if self.active else pg.Color('black')
+        if event.type == pg.KEYDOWN:
+            if self.active:
+                if event.key == pg.K_RETURN:
+                    pass
+                elif event.key == pg.K_BACKSPACE:
+                    self.text = self.text[:-1]
+                else:
+                    self.text += event.unicode
+                self.txt_surface = self.font.render(self.text, True, self.color)
 
-    def drawBG(self):
-        colorBg = (0,0,0) #black
-        colorOutline = (0,205,0) if self.active else (205,0,0) #green or red
-        pygame.draw.rect(self.window,colorBg,[self.postion,self.dimension])
-        pygame.draw.rect(self.window,colorOutline,[self.postion,self.dimension],3)
-
-    def drawText(self):
-        font = pygame.font.Font(None,50)
-        text = font.render(self.text, True, "white")
-        self.window.blit(text,(self.postion[0]+10,self.postion[1]+10))
-
-    def contains(self,pos):
-        if pos[0] >= self.postion[0] and pos[0] <= self.postion[0] + self.dimension[0]:
-            if pos[1] >= self.postion[1] and pos[1] <= self.postion[1] + self.dimension[1]:
-                return True
-        return False
-
-    def update(self,event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.contains(pygame.mouse.get_pos()):
-                self.active()
-        if event.type == pygame.KEYDOWN and self.active :
-            if event.key == K_BACKSPACE: #to supprime
-                self.text = self.text[:-1]
-            else: #to add
-                c = event.unicode
-                if c in self.alphabet and len(self.text) < self.maxC:
-                    self.text += c
-        self.draw()
-
-    def active(self):
-        self.active = not self.active
-
-    def getText(self):
-        return self.text
-
-    def seText(self,newText):
-        self.__text = newText"""
+    def draw(self, screen):
+        screen.blit(self.label_surface, (self.rect.x - self.label_surface.get_width() - 10, self.rect.y + self.rect.h // 2 - self.label_surface.get_height() // 2))
+        screen.blit(self.txt_surface, (self.rect.x + 5, self.rect.y + self.rect.h // 2 - self.txt_surface.get_height() // 2))
+        pg.draw.rect(screen, self.color, self.rect, 2)
