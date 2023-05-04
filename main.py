@@ -253,6 +253,7 @@ class App:
             return
         
         self.saveHistory()
+        self.displayGraphs()
         self.uiElements["startButton"].toggled = False
         self.uiElements["startButton"].draw()
         self.reset()
