@@ -119,7 +119,7 @@ class App:
             for  i in range(-1,-6,-1):
                 genScore = self.genHistory[i].findBestIndividual(1)[0].get_bestScore()
                 multigenAvg += genScore
-            multigenAvg = multigenAvg/10
+            multigenAvg = multigenAvg/5
             # if so, roll back 5 gen to gen new parents
             if self.population.findBestIndividual(1)[0].get_bestScore() < multigenAvg:
                 parents = self.genHistory[-5].findBestIndividual(2) if self.selectionStrat == "bestFirst" else self.genHistory[-5].get_individualList()
